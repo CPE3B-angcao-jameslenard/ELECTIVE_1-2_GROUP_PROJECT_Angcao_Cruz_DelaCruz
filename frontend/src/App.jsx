@@ -1,120 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="app-wrapper">
+      
+      {/* Container 1: The Top Header */}
+      <header className="floating-container header-container">
+        <div className="logo-area">
+          {/* <span className="logo-icon">🧁</span> */}
+          <h1 className="logo-text">DISHcovery AI <span className="logo-sub">| Global Desserts</span></h1>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
+        <div className="header-buttons">
+          <button className="btn-outline">SIGN UP</button>
+          <button className="btn-solid-primary">LOGIN</button>
         </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
+      {/* Container 2: The Main Search Hero */}
+      <section className="floating-container hero-container">
+        <div className="hero-content">
+          <h2 className="hero-title">✨ Satisfy your sweet tooth</h2>
+          <p className="hero-subtitle">Discover authentic dessert recipes from patisseries and kitchens around the world.</p>
+          
+          <div className="search-bar-row">
+            <input type="text" className="main-search-input" placeholder="matcha, dark chocolate, strawberries..." />
+            <button className="btn-search">🍰 Find Desserts</button>
+          </div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+          <div className="suggestion-tags">
+            <span className="tag">🍫 Belgian Chocolate</span>
+            <span className="tag">🍵 Japanese Mochi</span>
+            <span className="tag">🍓 French Tarts</span>
+            <span className="tag">🍮 Mexican Flan</span>
+          </div>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
+
+        <div className="hero-image-wrapper">
+          {/* Global Dessert Showcase Image */}
+          <div className="food-circle-placeholder"></div>
         </div>
       </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      {/* Container 3: The Filter Ribbon */}
+      <section className="floating-container filter-container">
+        <div className="recipe-count">🍨 You have 0 desserts to explore</div>
+        <div className="filter-buttons">
+          <button className="filter-btn active">ALL</button>
+          <button className="filter-btn">CAKES</button>
+          <button className="filter-btn">PASTRIES</button>
+          <button className="filter-btn">FROZEN</button>
+          <button className="filter-btn">TRADITIONAL</button>
+          <button className="filter-btn">COOKIES</button>
+        </div>
+      </section>
+
+    </div>
   )
 }
 
