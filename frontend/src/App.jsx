@@ -1,13 +1,23 @@
+import { useState, useEffect } from 'react' // We import the 'brain' tools here
 import './App.css'
 
 function App() {
+  // 1. The Memory: This holds the data from the backend
+  const [desserts, setDesserts] = useState([]);
+
+  // 2. The Bridge: This fetches the data when the website opens
+  useEffect(() => {
+    fetch('http://localhost:5000/api/desserts')
+      .then(response => response.json()) 
+      .then(data => setDesserts(data))   
+      .catch(error => console.error("Could not reach the kitchen!", error));
+  }, []); 
+
   return (
     <div className="app-wrapper">
       
-      {/* Container 1: The Top Header */}
       <header className="floating-container header-container">
         <div className="logo-area">
-          {/* <span className="logo-icon">🧁</span> */}
           <h1 className="logo-text">DISHcovery AI <span className="logo-sub">| Global Desserts</span></h1>
         </div>
         <div className="header-buttons">
@@ -16,7 +26,6 @@ function App() {
         </div>
       </header>
 
-      {/* Container 2: The Main Search Hero */}
       <section className="floating-container hero-container">
         <div className="hero-content">
           <h2 className="hero-title">✨ Satisfy your sweet tooth</h2>
@@ -28,22 +37,27 @@ function App() {
           </div>
 
           <div className="suggestion-tags">
-            <span className="tag">🍫 Belgian Chocolate</span>
-            <span className="tag">🍵 Japanese Mochi</span>
-            <span className="tag">🍓 French Tarts</span>
-            <span className="tag">🍮 Mexican Flan</span>
+            {/* 3. The Display: We loop through the backend data and print it here */}
+            {desserts.length > 0 ? (
+              desserts.map(dessert => (
+                <span key={dessert.id} className="tag">
+                  📍 {dessert.name} ({dessert.origin})
+                </span>
+              ))
+            ) : (
+              <span className="tag">Loading kitchen data...</span>
+            )}
           </div>
         </div>
 
         <div className="hero-image-wrapper">
-          {/* Global Dessert Showcase Image */}
           <div className="food-circle-placeholder"></div>
         </div>
       </section>
 
-      {/* Container 3: The Filter Ribbon */}
       <section className="floating-container filter-container">
-        <div className="recipe-count">🍨 You have 0 desserts to explore</div>
+        {/* 4. The Counter: This automatically counts how many items are in the database */}
+        <div className="recipe-count">🍨 You have {desserts.length} desserts to explore</div>
         <div className="filter-buttons">
           <button className="filter-btn active">ALL</button>
           <button className="filter-btn">CAKES</button>
