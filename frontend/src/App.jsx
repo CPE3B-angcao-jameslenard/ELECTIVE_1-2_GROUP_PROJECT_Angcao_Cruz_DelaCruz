@@ -21,7 +21,6 @@ function App() {
   return (
     <div className="app-wrapper">
       
-      {/* Container 1: The Top Header */}
       <header className="floating-container header-container">
         <div className="logo-area">
           <h1 className="logo-text">DISHcovery AI <span className="logo-sub">| Global Desserts</span></h1>
@@ -32,7 +31,6 @@ function App() {
         </div>
       </header>
 
-      {/* Container 2: The Main Search Hero */}
       <section className="floating-container hero-container">
         <div className="hero-content">
           <h2 className="hero-title">✨ Satisfy your sweet tooth</h2>
@@ -44,10 +42,16 @@ function App() {
           </div>
 
           <div className="suggestion-tags">
-            <span className="tag">🍫 Belgian Chocolate</span>
-            <span className="tag">🍵 Japanese Mochi</span>
-            <span className="tag">🍓 French Tarts</span>
-            <span className="tag">🍮 Mexican Flan</span>
+            {/* 3. The Display: We loop through the backend data and print it here */}
+            {desserts.length > 0 ? (
+              desserts.map(dessert => (
+                <span key={dessert.id} className="tag">
+                  📍 {dessert.name} ({dessert.origin})
+                </span>
+              ))
+            ) : (
+              <span className="tag">Loading kitchen data...</span>
+            )}
           </div>
         </div>
 
@@ -56,7 +60,6 @@ function App() {
         </div>
       </section>
 
-      {/* Container 3: The Filter Ribbon */}
       <section className="floating-container filter-container">
         {/* 5. DYNAMIC DATA: This now counts your actual desserts! */}
         <div className="recipe-count">🍨 You have {desserts.length} desserts to explore</div>
