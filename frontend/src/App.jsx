@@ -1,17 +1,22 @@
-import { useState, useEffect } from 'react' // We import the 'brain' tools here
+import { useState, useEffect } from 'react' // 1. Added these hooks
+import axios from 'axios' // 2. Added Axios
 import './App.css'
 
 function App() {
-  // 1. The Memory: This holds the data from the backend
+  // 3. Create a state (memory) to hold our desserts
   const [desserts, setDesserts] = useState([]);
 
-  // 2. The Bridge: This fetches the data when the website opens
+  // 4. The "Handshake": This runs as soon as the website opens
   useEffect(() => {
-    fetch('http://localhost:5000/api/desserts')
-      .then(response => response.json()) 
-      .then(data => setDesserts(data))   
-      .catch(error => console.error("Could not reach the kitchen!", error));
-  }, []); 
+    axios.get('http://localhost:5000/api/desserts')
+      .then(response => {
+        setDesserts(response.data); // Store the desserts in our state
+        console.log("Success! Data received:", response.data);
+      })
+      .catch(error => {
+        console.error("The Python kitchen is closed!", error);
+      });
+  }, []);
 
   return (
     <div className="app-wrapper">
@@ -56,8 +61,9 @@ function App() {
       </section>
 
       <section className="floating-container filter-container">
-        {/* 4. The Counter: This automatically counts how many items are in the database */}
+        {/* 5. DYNAMIC DATA: This now counts your actual desserts! */}
         <div className="recipe-count">🍨 You have {desserts.length} desserts to explore</div>
+        
         <div className="filter-buttons">
           <button className="filter-btn active">ALL</button>
           <button className="filter-btn">CAKES</button>
@@ -67,6 +73,13 @@ function App() {
           <button className="filter-btn">COOKIES</button>
         </div>
       </section>
+
+      {/* 6. ELEC 2 Requirement: The Official Footer */}
+      <footer className="project-footer">
+        <p>Developed by BS Computer Engineering Students</p>
+        <p>Bulacan State University</p>
+        <p>2026</p>
+      </footer>
 
     </div>
   )
