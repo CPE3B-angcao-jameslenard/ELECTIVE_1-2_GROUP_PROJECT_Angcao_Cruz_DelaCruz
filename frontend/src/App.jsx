@@ -1,13 +1,29 @@
+import { useState, useEffect } from 'react' // 1. Added these hooks
+import axios from 'axios' // 2. Added Axios
 import './App.css'
 
 function App() {
+  // 3. Create a state (memory) to hold our desserts
+  const [desserts, setDesserts] = useState([]);
+
+  // 4. The "Handshake": This runs as soon as the website opens
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/desserts')
+      .then(response => {
+        setDesserts(response.data); // Store the desserts in our state
+        console.log("Success! Data received:", response.data);
+      })
+      .catch(error => {
+        console.error("The Python kitchen is closed!", error);
+      });
+  }, []);
+
   return (
     <div className="app-wrapper">
       
       {/* Container 1: The Top Header */}
       <header className="floating-container header-container">
         <div className="logo-area">
-          {/* <span className="logo-icon">🧁</span> */}
           <h1 className="logo-text">DISHcovery AI <span className="logo-sub">| Global Desserts</span></h1>
         </div>
         <div className="header-buttons">
@@ -36,14 +52,15 @@ function App() {
         </div>
 
         <div className="hero-image-wrapper">
-          {/* Global Dessert Showcase Image */}
           <div className="food-circle-placeholder"></div>
         </div>
       </section>
 
       {/* Container 3: The Filter Ribbon */}
       <section className="floating-container filter-container">
-        <div className="recipe-count">🍨 You have 0 desserts to explore</div>
+        {/* 5. DYNAMIC DATA: This now counts your actual desserts! */}
+        <div className="recipe-count">🍨 You have {desserts.length} desserts to explore</div>
+        
         <div className="filter-buttons">
           <button className="filter-btn active">ALL</button>
           <button className="filter-btn">CAKES</button>
@@ -53,6 +70,13 @@ function App() {
           <button className="filter-btn">COOKIES</button>
         </div>
       </section>
+
+      {/* 6. ELEC 2 Requirement: The Official Footer */}
+      <footer className="project-footer">
+        <p>Developed by BS Computer Engineering Students</p>
+        <p>Bulacan State University</p>
+        <p>2026</p>
+      </footer>
 
     </div>
   )
