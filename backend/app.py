@@ -1,24 +1,23 @@
 import os
+import json  # Added this to read the AI's JSON output perfectly
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from google import genai  # The Google GenAI SDK
+from google import genai
 from dotenv import load_dotenv
 
-# 1. THE VAULT: Load variables from your .env file
+# 1. THE VAULT
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
-# 2. THE BRAIN: Initialize Gemini with your secret key
-# It automatically looks for "GEMINI_API_KEY" in your .env
+# 2. THE BRAIN
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 @app.route('/')
 def home():
     return "DISHcovery AI Python Backend is LIVE and AI-Powered!"
 
-# Keep your original desserts route so the frontend doesn't break
 @app.route('/api/desserts', methods=['GET'])
 def get_desserts():
     sample_desserts = [
@@ -28,26 +27,52 @@ def get_desserts():
     ]
     return jsonify(sample_desserts)
 
-# 3. THE MAGIC: New route to generate recipes with Gemini
+# 3. THE MAGIC
 @app.route('/api/generate-recipe', methods=['POST'])
 def generate_recipe():
-    # Get the ingredients sent from the frontend/terminal
     data = request.json
     ingredients = data.get('ingredients', 'chocolate')
 
     try:
-        # Prompt Gemini to be a world-class pastry chef
-        prompt = f"You are a professional pastry chef. Create a unique dessert recipe using: {ingredients}. Provide a name, ingredients list, and 3-step instructions."
+        # THE MASTER PROMPT
+        prompt = f"""You are the backend AI for "DISHcovery AI", a professional recipe application. Your job is to take a list of user-provided ingredients and generate a creative, delicious recipe. 
         
+        CRITICAL RULE: You must NEVER respond with conversational text. You must ONLY respond with a raw, valid JSON object. Do not use markdown formatting like ```json.
+        
+        Your JSON must follow this exact structure:
+        {{
+          "recipeName": "A catchy name for the dish",
+          "prepTime": "Estimated time in minutes",
+          "difficulty": "Easy, Medium, or Hard",
+          "ingredients": [
+            "Ingredient 1 with exact measurements",
+            "Ingredient 2 with exact measurements"
+          ],
+          "instructions": [
+            "Step 1: Do this.",
+            "Step 2: Do that."
+          ]
+        }}
+        
+        The user's ingredients are: {ingredients}
+        """
+        
+        # Ask Gemini
         response = client.models.generate_content(
-           model="gemini-3-flash-preview",
+            model="gemini-3-flash-preview",
             contents=prompt
         )
         
+        # Clean the response and turn it into a real Python dictionary
+        clean_text = response.text.replace("```json", "").replace("```", "").strip()
+        recipe_data = json.loads(clean_text)
+        
+        # Send perfect JSON back to the React frontend!
         return jsonify({
             "status": "success",
-            "recipe": response.text
+            "recipe": recipe_data
         })
+        
     except Exception as e:
         return jsonify({
             "status": "error",
