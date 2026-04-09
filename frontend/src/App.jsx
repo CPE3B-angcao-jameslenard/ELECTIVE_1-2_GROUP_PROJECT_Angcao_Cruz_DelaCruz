@@ -4,12 +4,40 @@ import './App.css';
 function App() {
   const [desserts, setDesserts] = useState([]);
 
+  // Step 1: Add the "Memory" (React State)
+  const [ingredients, setIngredients] = useState("");
+  const [recipeResult, setRecipeResult] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     fetch('http://localhost:5000/api/desserts')
       .then(response => response.json())
       .then(data => setDesserts(data))
       .catch(error => console.error("Kitchen connection error:", error));
   }, []);
+
+  // Step 2: Paste the Function
+  const generateRecipe = async () => {
+    if (!ingredients) return; // Don't do anything if input is empty
+
+    setIsLoading(true);
+    try {
+      const response = await fetch('http://localhost:5005/api/generate-recipe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ingredients: ingredients })
+      });
+
+      const data = await response.json();
+      console.log("AI Kitchen Output:", data);
+      setRecipeResult(data.recipe); // Save the AI data!
+
+    } catch (error) {
+      console.error("The kitchen is closed!", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <div className="app-wrapper">
@@ -36,9 +64,17 @@ function App() {
             <h2 className="hero-title">Sweet Moments, <br />Global Flavors.</h2>
             <p className="hero-subtitle">Explore the world's finest patisseries from your screen.</p>
             <div className="hero-search-area">
+              {/* Step 3: Wire up the HTML */}
               <div className="hero-search-bar">
-                <input type="text" placeholder="Search macarons..." />
-                <button>Search</button>
+                <input
+                  type="text"
+                  placeholder="Enter ingredients (e.g., mango and graham)"
+                  value={ingredients}
+                  onChange={(e) => setIngredients(e.target.value)}
+                />
+                <button onClick={generateRecipe}>
+                  {isLoading ? "Baking..." : "Generate Recipe"}
+                </button>
               </div>
               <div className="suggestion-tags">
                 <span className="tag">✨ Matcha Mille Crepe</span>
