@@ -1,5 +1,6 @@
 import os
-import json  # Added this to read the AI's JSON output perfectly
+import json
+import requests
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from google import genai
@@ -16,16 +17,7 @@ client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 @app.route('/')
 def home():
-    return "DISHcovery AI Python Backend is LIVE and AI-Powered!"
-
-@app.route('/api/desserts', methods=['GET'])
-def get_desserts():
-    sample_desserts = [
-        { "id": 1, "name": "Matcha Mille Crepe", "origin": "Japan" },
-        { "id": 2, "name": "Tiramisu", "origin": "Italy" },
-        { "id": 3, "name": "Leche Flan", "origin": "Philippines" }
-    ]
-    return jsonify(sample_desserts)
+    return "DISHcovery AI Python Backend is LIVE!"
 
 # 3. THE MAGIC
 @app.route('/api/generate-recipe', methods=['POST'])
@@ -34,50 +26,43 @@ def generate_recipe():
     ingredients = data.get('ingredients', 'chocolate')
 
     try:
-        # THE MASTER PROMPT
-        prompt = f"""You are the backend AI for "DISHcovery AI", a professional recipe application. Your job is to take a list of user-provided ingredients and generate a creative, delicious recipe. 
-        
-        CRITICAL RULE: You must NEVER respond with conversational text. You must ONLY respond with a raw, valid JSON object. Do not use markdown formatting like ```json.
-        
-        Your JSON must follow this exact structure:
-        {{
-          "recipeName": "A catchy name for the dish",
-          "prepTime": "Estimated time in minutes",
-          "difficulty": "Easy, Medium, or Hard",
-          "ingredients": [
-            "Ingredient 1 with exact measurements",
-            "Ingredient 2 with exact measurements"
-          ],
-          "instructions": [
-            "Step 1: Do this.",
-            "Step 2: Do that."
-          ]
-        }}
-        
-        The user's ingredients are: {ingredients}
-        """
-        
-        # Ask Gemini
+        # Step A: Ask Gemini for the recipe
+        prompt = f"Generate a recipe using: {ingredients}. Respond ONLY in raw JSON."
         response = client.models.generate_content(
-            model="gemini-3-flash-preview",
+            model="gemini-1.5-flash",
             contents=prompt
         )
         
-        # Clean the response and turn it into a real Python dictionary
         clean_text = response.text.replace("```json", "").replace("```", "").strip()
         recipe_data = json.loads(clean_text)
         
-        # Send perfect JSON back to the React frontend!
+        # Step B: Ask Spoonacular for a photo
+        dish_name = recipe_data.get("recipeName", "food")
+        spoon_key = os.getenv("SPOONACULAR_API_KEY")
+        image_url = "https://via.placeholder.com/500?text=No+Image+Found" 
+        
+        photo_resp = requests.get(
+            f"https://api.spoonacular.com/recipes/complexSearch?query={dish_name}&number=1&apiKey={spoon_key}"
+        )
+
+        
+        if photo_resp.status_code == 200:
+            results = photo_resp.json().get("results", [])
+            if results:
+                image_url = results[0].get("image")
+
+        # --- THIS IS THE ADDITIONAL CODE FROM YOUR SCREENSHOT ---
+        # It lives here because it needs 'image_url' to be ready first!
+        recipe_data["image"] = image_url 
+
+        # Step C: Send the final package back
         return jsonify({
             "status": "success",
             "recipe": recipe_data
         })
         
     except Exception as e:
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
+        return jsonify({"status": "error", "message": str(e)}), 500
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(port=5005, debug=True)
