@@ -1,191 +1,237 @@
-/* 1. Global Setup & Background Image */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+:root {
+  --bg-color: #fdfaf4;
+  --bg-stripe: #fff5f7; 
+  --glass: rgba(255, 255, 255, 0.85);
+  --title-brown: #5d4037;
+  --subtitle-gray: #8d777d;
+  --deep-pink: #f06292;
+  --header-pink-bg: #fce4ec;
+  --scallop-pink: #f8bbd0;
+  --logo-deep-pink: #d81b60;
+  --frame-pink: #e9c8cc;
+  --footer-berry: #880e4f; 
+  --footer-plum: #4a148c;
+  --footer-rose-text: #ad1457;
 }
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
 .app-wrapper {
   min-height: 100vh;
-  /* Soft, sweet macaron background */
-  background: url('https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat fixed;
-  padding: 30px 20px;
+  width: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    #ffffff,
+    #ffffff 40px,
+    var(--bg-stripe) 40px,
+    var(--bg-stripe) 80px
+  );
   display: flex;
   flex-direction: column;
   align-items: center; 
   gap: 25px; 
+  overflow-x: hidden;
+  position: relative;
 }
 
-/* 2. The Master "Floating Container" Rule */
-.floating-container {
-  background-color: rgba(255, 253, 250, 0.95); /* Vanilla cream with slight transparency */
-  border-radius: 50px; 
+
+.main-site-header { width: 100%; background-color: var(--header-pink-bg); position: sticky; top: 0; z-index: 100; }
+.header-inner { max-width: 1200px; margin: 0 auto; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+.header-logo-text { color: var(--logo-deep-pink); font-size: 30px; font-weight: 900; }
+.header-right { display: flex; align-items: center; gap: 15px; }
+.header-search-capsule { display: flex; background: white; border: 1.5px solid var(--deep-pink); border-radius: 50px; width: 240px; overflow: hidden; }
+.header-search-field { border: none; padding: 8px 15px; outline: none; flex: 1; font-size: 14px; }
+.header-search-submit { background: var(--deep-pink); border: none; padding: 0 12px; cursor: pointer; color: white; }
+.header-login-btn { background: var(--logo-deep-pink); border: none; color: white; font-weight: 700; cursor: pointer; padding: 10px 20px; border-radius: 50px; font-size: 13px; transition: all 0.2s ease; }
+
+.header-scallop-divider {
+  height: 20px; width: 100%; background-color: var(--scallop-pink);
+  -webkit-mask-image: radial-gradient(circle at 10px -8px, transparent 12px, black 13px);
+  mask-image: radial-gradient(circle at 10px -8px, transparent 12px, black 13px);
+  mask-size: 20px 100%;
+}
+
+.content-wrapper { max-width: 1100px; width: 90%; margin: 40px auto; display: flex; flex-direction: column; gap: 40px; z-index: 1; }
+.glass-effect { background: var(--glass); backdrop-filter: blur(12px); border-radius: 45px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid rgba(255,255,255,0.6); }
+
+.hero-container { display: grid; grid-template-columns: 1.1fr 0.9fr; padding: 60px; align-items: center; }
+.hero-title { font-size: 52px; color: var(--title-brown); line-height: 1.1; margin-bottom: 20px; }
+.hero-subtitle { color: var(--subtitle-gray); font-size: 18px; margin-bottom: 30px; }
+.hero-search-bar { background: white; border-radius: 50px; padding: 6px; display: flex; max-width: 450px; border: 1px solid #eee; margin-bottom: 15px; }
+.hero-search-bar input { flex: 1; border: none; padding: 10px 20px; outline: none; background: transparent; }
+.hero-search-bar button { background: var(--deep-pink); color: white; border: none; padding: 10px 25px; border-radius: 50px; font-weight: 700; cursor: pointer; }
+.tag { background: #fff; color: var(--deep-pink); padding: 8px 16px; border-radius: 50px; font-size: 14px; font-weight: 600; border: 1px solid #fce4ec; margin-right: 10px; display: inline-block; }
+
+.food-circle-main { width: 320px; height: 320px; background: url('https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600') center/cover; border-radius: 50%; border: 12px solid white; position: relative; z-index: 2; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+.hero-image-side { position: relative; display: flex; justify-content: center; }
+.accent-blob { position: absolute; width: 380px; height: 380px; background: #ffe4e9; filter: blur(50px); border-radius: 50%; z-index: 1; }
+
+.filter-bar { padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-radius: 60px; }
+.recipe-count { font-weight: 800; color: var(--deep-pink); }
+.filter-btn { background: none; border: none; padding: 10px 20px; font-weight: 600; color: var(--title-brown); cursor: pointer; }
+.filter-btn.active { background: var(--deep-pink); color: white; border-radius: 50px; }
+
+.dessert-bubble-container { padding: 80px 60px; position: relative; }
+.dessert-display-grid { display: flex; flex-direction: column; }
+.dessert-card { display: flex; align-items: center; gap: 50px; margin-bottom: 50px; z-index: 2; }
+.ornate-frame { width: 260px; height: 300px; background: var(--frame-pink); padding: 5px; clip-path: polygon(20% 0%, 80% 0%, 100% 15%, 100% 85%, 80% 100%, 20% 100%, 0% 85%, 0% 15%); }
+.frame-inner { width: 100%; height: 100%; background: white; clip-path: inherit; overflow: hidden; }
+.frame-inner img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+.dessert-card:hover img { transform: scale(1.1); }
+.card-mid-right { align-self: flex-end; flex-direction: row-reverse; text-align: right; }
+.dessert-info h3 { color: var(--title-brown); font-size: 28px; margin-bottom: 12px; font-weight: 800; }
+.dessert-info p { color: var(--subtitle-gray); max-width: 320px; line-height: 1.6; font-size: 15px; }
+
+.site-footer-scallop {
   width: 100%;
-  max-width: 1100px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); /* Softer shadow for a lighter feel */
-  padding: 15px 30px;
-}
-
-/* 3. Header Styling */
-.header-container {
+  background-color: var(--scallop-pink);
+  margin-top: 80px;
+  position: relative;
+  padding: 60px 0 50px 0; 
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
-.logo-text {
-  color: #6d4c41; /* Chocolate Brown */
-  font-size: 24px;
-  font-weight: bold;
+.site-footer-scallop::before {
+  content: "";
+  position: absolute;
+  top: -20px; 
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background-color: var(--scallop-pink);
+  -webkit-mask-image: radial-gradient(circle at 10px 20px, transparent 12px, black 13px);
+  mask-image: radial-gradient(circle at 10px 20px, transparent 12px, black 13px);
+  mask-size: 20px 100%;
 }
 
-.logo-sub {
-  color: #a4b0be;
-  font-weight: normal;
-  font-size: 18px;
-}
-
-.btn-outline {
-  border: 2px solid #6d4c41;
-  background: transparent;
-  color: #6d4c41;
-  padding: 8px 20px;
-  border-radius: 20px;
-  margin-right: 10px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btn-solid-primary {
-  background-color: #6d4c41;
-  color: white;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 20px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* 4. Hero Search Container Styling */
-.hero-container {
+.footer-content-inner {
+  max-width: 800px;
+  width: 90%;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  padding: 40px 50px;
+  gap: 20px;
 }
 
-.hero-title {
-  color: #e84393; /* Raspberry Pink */
-  font-size: 34px;
-  margin-bottom: 10px;
-}
-
-.hero-subtitle {
-  color: #747d8c;
-  margin-bottom: 25px;
-  font-size: 16px;
-}
-
-.search-bar-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.main-search-input {
-  flex-grow: 1;
-  padding: 15px 25px;
-  border-radius: 30px;
-  border: 1px solid #ffcccc; /* Soft pink border */
-  font-size: 16px;
-  min-width: 400px;
-  background-color: #fffafb;
-}
-
-.btn-search {
-  background-color: #e84393; /* Raspberry Pink */
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 30px;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(232, 67, 147, 0.3);
-}
-
-.suggestion-tags {
+.footer-social-row {
   display: flex;
   gap: 15px;
-  flex-wrap: wrap;
-}
-
-.tag {
-  color: #d63031;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.food-circle-placeholder {
-  width: 220px;
-  height: 220px;
-  /* Beautiful fruit tart image */
-  background: url('https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=500&auto=format&fit=crop') center/cover;
-  border-radius: 50%;
-  border: 8px solid white;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-}
-
-/* 5. Filter Ribbon Styling */
-.filter-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  border-radius: 40px;
-}
-
-.recipe-count {
-  background-color: #e84393;
-  color: white;
-  padding: 8px 20px;
-  border-radius: 20px;
-  font-weight: bold;
-}
-
-.filter-buttons {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
   justify-content: center;
 }
 
-.filter-btn {
-  background: transparent;
-  border: none;
-  color: #a4b0be;
+.social-icon-square {
+  width: 40px;
+  height: 40px;
+  background-color: var(--logo-deep-pink); 
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  border-radius: 8px;
   font-weight: bold;
-  padding: 8px 15px;
-  cursor: pointer;
-  transition: 0.3s;
+  font-size: 13px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.filter-btn.active {
-  background-color: #ffeaa7; /* Sweet butter color */
-  color: #6d4c41; /* Chocolate text */
-  border-radius: 20px;
+.social-icon-square:hover {
+  background-color: var(--deep-pink); 
+  transform: translateY(-3px);
 }
 
-/* =========================================
-   📱 RESPONSIVE DESIGN (Mobile & Tablets)
-   ========================================= */
+.footer-nav-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+.footer-nav-row a {
+  color: var(--footer-berry);
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.2s;
+}
+
+.footer-nav-row a:hover {
+  color: white;
+}
+
+.footer-copyright-row {
+  font-size: 13px;
+  color: var(--footer-rose-text);
+  font-weight: 500;
+}
+
+.footer-tagline-text {
+  color: var(--title-brown);
+  font-weight: 800;
+  font-size: 17px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 10px;
+}
+
 @media (max-width: 768px) {
-  .header-container { flex-direction: column; gap: 15px; text-align: center; }
-  .hero-container { flex-direction: column-reverse; text-align: center; padding: 30px 20px; gap: 30px; }
-  .search-bar-row { flex-direction: column; width: 100%; }
-  .main-search-input { min-width: 0; width: 100%; }
-  .btn-search { width: 100%; }
-  .suggestion-tags { justify-content: center; }
-  .filter-container { flex-direction: column; gap: 15px; text-align: center; }
+  .header-inner { 
+    flex-direction: column; 
+    gap: 15px; 
+    text-align: center; 
+  }
+  
+  .hero-container { 
+    display: flex; 
+    flex-direction: column-reverse; 
+    text-align: center; 
+    padding: 30px 20px; 
+    gap: 30px; 
+  }
+
+  .hero-search-bar { 
+    flex-direction: column; 
+    width: 100%; 
+    background: transparent; 
+    border: none;
+  }
+  
+  .hero-search-bar input { 
+    min-width: 0; 
+    width: 100%; 
+    background: white;
+    border-radius: 50px;
+    margin-bottom: 10px;
+    border: 1px solid #eee;
+  }
+  
+  .hero-search-bar button { 
+    width: 100%; 
+  }
+
+  .suggestion-tags { 
+    justify-content: center; 
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .filter-bar { 
+    flex-direction: column; 
+    gap: 15px; 
+    text-align: center; 
+    border-radius: 25px;
+  }
+
+  .dessert-card, 
+  .card-mid-right {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 20px;
+  }
 }
