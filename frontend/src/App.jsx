@@ -1,474 +1,194 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './App.css';
 
 function App() {
-  const [desserts, setDesserts] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [ingredients, setIngredients] = useState("");
-  const [recipeResult, setRecipeResult] = useState(null);
+  const [foodType, setFoodType] = useState(""); 
+  const [recipes, setRecipes] = useState([]); 
+  const [aiDessertPlan, setAiDessertPlan] = useState(""); 
   const [isLoading, setIsLoading] = useState(false);
-  const [filteredDesserts, setFilteredDesserts] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  useEffect(() => {
-    fetch('http://localhost:5005/api/desserts')
-      .then(response => response.json())
-      .then(data => {
-        setDesserts(data);
-        setFilteredDesserts(data);
-      })
-      .catch(error => console.error("Kitchen connection error:", error));
-  }, []);
-
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      setFilteredDesserts(desserts);
-    } else {
-      const filtered = desserts.filter(dessert => {
-        const name = dessert?.name || '';
-        const description = dessert?.description || '';
-        return (
-          name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          description.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-      });
-      setFilteredDesserts(filtered);
-    }
-  }, [searchQuery, desserts]);
-
-  const generateRecipe = async () => {
+  const searchSpoonacular = async () => {
     if (!ingredients.trim()) return;
-
     setIsLoading(true);
-    setRecipeResult(null);
-
+    setErrorMessage("");
+    // NOTICE: setAiDessertPlan("") was removed so the AI plan stays on the screen
+    
     try {
-      const response = await fetch('http://localhost:5005/api/generate-recipe', {
+      const response = await fetch('http://localhost:5005/api/search-recipes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ingredients,
-          instructions:
-            "ALWAYS return COMPLETE recipe with: recipeName, prepTime, difficulty, ingredients array, instructions array with 5-8 detailed steps. Format as JSON only."
-        })
+        body: JSON.stringify({ ingredients, foodType })
       });
-
       const data = await response.json();
-      console.log("AI Kitchen Output:", data);
-
-      const recipe = {
-        recipeName: data.recipe?.recipeName || `${ingredients} Delight`,
-        prepTime: data.recipe?.prepTime || "25-35 mins",
-        difficulty: data.recipe?.difficulty || "⭐⭐⭐",
-        ingredients: Array.isArray(data.recipe?.ingredients)
-          ? data.recipe.ingredients
-          : [ingredients],
-        instructions: Array.isArray(data.recipe?.instructions)
-          ? data.recipe.instructions
-          : [
-              "Combine all ingredients in a bowl",
-              "Mix until smooth consistency",
-              "Pour into prepared pan",
-              "Bake at 180°C for 25 minutes",
-              "Cool and serve chilled!"
-            ]
-      };
-
-      setRecipeResult(recipe);
+      
+      if (data.status === "success" && data.recipes.length > 0) {
+        setRecipes(data.recipes);
+      } else {
+        setErrorMessage("Spoonacular couldn't find a match, but try the AI Chef!");
+      }
     } catch (error) {
-      console.error("The kitchen is closed!", error);
-
-      setRecipeResult({
-        recipeName: `${ingredients} Special`,
-        prepTime: "30 mins",
-        difficulty: "⭐⭐",
-        ingredients: ingredients.split(',').map(i => i.trim()),
-        instructions: [
-          `Prepare your ${ingredients} ingredients`,
-          "Mix all ingredients thoroughly in a large bowl",
-          "Shape or pour into desired form",
-          "Chill or bake according to texture (20-30 mins)",
-          "Garnish and serve with love! 💕"
-        ]
-      });
+      console.error("Fetch error:", error);
+      setErrorMessage("Connection error. Is Flask running?");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const generateAiPlan = async () => {
+    if (!ingredients.trim()) return;
+    setIsLoading(true);
+    setErrorMessage("");
+    // NOTICE: setRecipes([]) was removed so the database recipes stay on the screen
+
+    try {
+      const response = await fetch('http://localhost:5005/api/generate-meal-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ingredients, foodType })
+      });
+      const data = await response.json();
+      if (data.status === "success") setAiDessertPlan(data.plan);
+    } catch (error) {
+      console.error("AI error:", error);
+      setErrorMessage("AI Chef connection error.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // --- NEW IMAGE FUNCTION ---
+const getHeroImage = () => {
+  // 1. If we have search results, show the first recipe's photo
+  if (recipes.length > 0 && recipes.image) return recipes.image;
+
+  // 2. Otherwise, match the dropdown (case-insensitive)
+  const type = (foodType || "").toLowerCase();
+
+  if (type.includes('main') || type.includes('course') || type.includes('ulam')) {
+    return "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=800"; // Juicy Steak
+  }
+  if (type.includes('dessert')) {
+    return "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800"; // The Original Cake
+  }
+  if (type.includes('snack')) {
+    return "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=800"; // Snack Platter
+  }
+  if (type.includes('breakfast')) {
+    return "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=800"; // Pancakes
+  }
+
+  // 3. Default image 
+  return "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800";
+};
+
   return (
     <div className="app-wrapper">
       <header className="main-site-header">
         <div className="header-inner">
-          <div className="header-left">
-            <h1 className="header-logo-text">DISHcovery</h1>
-          </div>
-          <div className="header-right">
-            <div className="header-search-capsule">
-              <input
-                type="text"
-                placeholder="Search mango graham..."
-                className="header-search-field"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button className="header-search-submit">🔍</button>
-            </div>
-            <button className="header-login-btn">Login/Signup</button>
-          </div>
+          <h1 className="header-logo-text">DISHcovery</h1>
         </div>
         <div className="header-scallop-divider"></div>
       </header>
 
-      <main className="content-wrapper">
+<main className="content-wrapper">
         <section className="hero-container glass-effect">
           <div className="hero-content">
-            <h2 className="hero-title">Sweet Moments, <br />Global Flavors.</h2>
-            <p className="hero-subtitle">Explore the world's finest patisseries from your screen.</p>
-
-            {recipeResult && (
-              <div
-                className="recipe-bubble-container glass-effect"
-                style={{
-                  margin: '30px 0',
-                  padding: '30px',
-                  background: 'rgba(255, 255, 255, 0.12)',
-                  borderRadius: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(20px)',
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}
-              >
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '-20px',
-                    right: '-20px',
-                    width: '100px',
-                    height: '100px',
-                    background: 'rgba(255, 215, 0, 0.15)',
-                    borderRadius: '50%',
-                    zIndex: 0
-                  }}
-                ></div>
-
-                <div style={{ position: 'relative', zIndex: 1 }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      marginBottom: '20px'
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: '50px',
-                        height: '50px',
-                        background: 'linear-gradient(45deg, #ffd700, #ffed4e)',
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '1.5rem'
-                      }}
-                    >
-                      👩‍🍳
-                    </div>
-                    <h3 style={{ margin: 0, color: '#ffd700', fontSize: '1.5rem' }}>Chef's Special</h3>
-                  </div>
-
-                  {recipeResult.recipeName && (
-                    <div
-                      style={{
-                        marginBottom: '20px',
-                        padding: '15px',
-                        background: 'rgba(255, 215, 0, 0.1)',
-                        borderRadius: '12px',
-                        borderLeft: '4px solid #ffd700'
-                      }}
-                    >
-                      <strong style={{ fontSize: '1.4rem', color: 'black' }}>🍰 {recipeResult.recipeName}</strong>
-                    </div>
-                  )}
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '15px',
-                      marginBottom: '20px',
-                      flexWrap: 'wrap',
-                      fontSize: '0.95rem'
-                    }}
-                  >
-                    {recipeResult.prepTime && (
-                      <div
-                        style={{
-                          background: 'rgba(255,255,255,0.15)',
-                          padding: '8px 16px',
-                          borderRadius: '20px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px'
-                        }}
-                      >
-                        ⏱️ {recipeResult.prepTime}
-                      </div>
-                    )}
-                    {recipeResult.difficulty && (
-                      <div
-                        style={{
-                          background: 'rgba(255,255,255,0.15)',
-                          padding: '8px 16px',
-                          borderRadius: '20px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px'
-                        }}
-                      >
-                        ⭐ {recipeResult.difficulty}
-                      </div>
-                    )}
-                  </div>
-
-                  {recipeResult.ingredients && (
-                    <div style={{ marginBottom: '20px' }}>
-                      <div
-                        style={{
-                          color: '#ffd700',
-                          fontWeight: 'bold',
-                          marginBottom: '12px',
-                          fontSize: '1.1rem'
-                        }}
-                      >
-                        🥭 Ingredients
-                      </div>
-                      <div
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                          gap: '10px'
-                        }}
-                      >
-                        {Array.isArray(recipeResult.ingredients) ? (
-                          recipeResult.ingredients.map((ing, idx) => (
-                            <div
-                              key={idx}
-                              style={{
-                                background: 'rgba(255,255,255,0.1)',
-                                padding: '12px 16px',
-                                borderRadius: '10px',
-                                borderLeft: '3px solid #ffd700',
-                                fontSize: '0.95rem'
-                              }}
-                            >
-                              {ing}
-                            </div>
-                          ))
-                        ) : (
-                          <div
-                            style={{
-                              background: 'rgba(255,255,255,0.1)',
-                              padding: '12px 16px',
-                              borderRadius: '10px',
-                              borderLeft: '3px solid #ffd700'
-                            }}
-                          >
-                            {recipeResult.ingredients}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {recipeResult.instructions && (
-                    <div>
-                      <div
-                        style={{
-                          color: '#ffd700',
-                          fontWeight: 'bold',
-                          marginBottom: '15px',
-                          fontSize: '1.1rem'
-                        }}
-                      >
-                        📋 Instructions
-                      </div>
-                    {Array.isArray(recipeResult.instructions) ? (
-  <div
-    style={{
-      display: 'grid',
-      gap: '14px'
-    }}
-  >
-    {recipeResult.instructions.map((step, idx) => (
-      <div
-        key={idx}
-        style={{
-          padding: '18px 20px',
-          background: 'rgba(255, 255, 255, 0.14)',
-          borderRadius: '20px',
-          border: '1px solid rgba(255, 215, 0, 0.35)',
-          boxShadow: '0 6px 18px rgba(0, 0, 0, 0.12)',
-          backdropFilter: 'blur(10px)',
-          position: 'relative',
-          overflow: 'hidden'
-        }}
-      >
-        <div
-          style={{
-            fontWeight: 'bold',
-            color: '#ffd700',
-            marginBottom: '8px',
-            fontSize: '1rem'
-          }}
-        >
-          Step {idx + 1}
-        </div>
-        <div style={{ lineHeight: '1.6', color: 'black' }}>{step}</div>
-      </div>
-    ))}
-  </div>
-) : (
-  <div
-    style={{
-      padding: '18px 20px',
-      background: 'rgba(255, 255, 255, 0.14)',
-      borderRadius: '20px',
-      border: '1px solid rgba(255, 215, 0, 0.35)',
-      boxShadow: '0 6px 18px rgba(0, 0, 0, 0.12)',
-      backdropFilter: 'blur(10px)'
-    }}
-  >
-    {recipeResult.instructions}
-  </div>
-
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+            <h2 className="hero-title">Delicious Moments, <br />Global Flavors.</h2>
+            
+            {errorMessage && <div className="error-msg" style={{ color: 'red', marginBottom: '10px' }}>⚠️ {errorMessage}</div>}
 
             <div className="hero-search-area">
-              <div className="hero-search-bar">
+              <div className="hero-search-bar" style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', border: 'none', background: 'transparent', padding: '0' }}>
                 <input
                   type="text"
-                  placeholder="Enter ingredients (e.g., mango and graham)"
+                  placeholder="e.g., mango, beef, chocolate..."
                   value={ingredients}
                   onChange={(e) => setIngredients(e.target.value)}
+                  style={{ flex: 1, padding: '10px', borderRadius: '50px', border: '1px solid #ddd' }}
                 />
-                <button onClick={generateRecipe} disabled={isLoading || !ingredients.trim()}>
-                  {isLoading ? "Baking..." : "Generate Recipe"}
+
+                <select 
+                  value={foodType} 
+                  onChange={(e) => setFoodType(e.target.value)} 
+                  className="type-select" 
+                  style={{ padding: '10px', borderRadius: '50px', border: '1px solid #ddd' }}
+                >
+                  <option value="">Any Type 🎲</option>
+                  <option value="dessert">Desserts 🍰</option>
+                  <option value="main course">Main Course (Ulam) 🥘</option>
+                  <option value="snack">Snack 🥨</option>
+                  <option value="breakfast">Breakfast 🍳</option>
+                </select>
+                
+                <button onClick={searchSpoonacular} disabled={isLoading} className="search-btn" style={{ padding: '10px 20px', borderRadius: '50px', background: '#ffd700', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}>
+                  {isLoading ? "Searching..." : "🔍 Find Recipes"}
+                </button>
+                <button onClick={generateAiPlan} disabled={isLoading} className="ai-btn" style={{ padding: '10px 20px', borderRadius: '50px', background: '#ff69b4', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}>
+                  {isLoading ? "Thinking..." : "✨ AI Chef Plan"}
                 </button>
               </div>
-
-              <div className="suggestion-tags">
-                <span className="tag">✨ Matcha Mille Crepe</span>
-                <span className="tag">✨ Tiramisu</span>
-                <span className="tag">✨ Chocolate Cake</span>
-              </div>
             </div>
-          </div>
 
-          <div className="hero-image-side">
-            <div className="food-circle-main"></div>
-            <div className="accent-blob"></div>
-          </div>
-        </section>
-
-        <section className="filter-bar glass-effect">
-          <div className="recipe-count">🍨 {filteredDesserts.length || 0} Delights Found</div>
-          <div className="filter-buttons">
-            <button className="filter-btn active">ALL</button>
-            <button className="filter-btn">CAKES</button>
-            <button className="filter-btn">PASTRIES</button>
-            <button className="filter-btn">FROZEN</button>
-          </div>
-        </section>
-
-        <section className="dessert-bubble-container glass-effect">
-          <div className="dessert-display-grid">
-            {filteredDesserts.length > 0 ? (
-              filteredDesserts.map((item, index) => (
-                <div key={item?.id || index} className={`dessert-card ${index % 2 !== 0 ? 'card-mid-right' : 'card-top-left'}`}>
-                  <div className="ornate-frame">
-                    <div className="frame-inner">
-                      <img
-                        src={item?.image || 'https://via.placeholder.com/300x200?text=No+Image'}
-                        alt={item?.name || 'Dessert'}
-                      />
-                    </div>
-                  </div>
-                  <div className="dessert-info">
-                    <h3>{item?.name || 'Unnamed Dessert'}</h3>
-                    <p>{item?.description || 'No description available'}</p>
-                  </div>
+            {/* AI MEAL PLAN DISPLAY */}
+            {aiDessertPlan && (
+              <div className="recipe-bubble-container glass-effect" style={{ marginTop: '20px', padding: '25px', borderRadius: '20px', background: 'rgba(255,255,255,0.8)' }}>
+                <h3 style={{ color: '#d81b60', marginBottom: '15px' }}>🪄 AI Custom 3-Day Plan</h3>
+                <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8', color: '#444' }}>
+                  {aiDessertPlan}
                 </div>
-              ))
-            ) : searchQuery ? (
-              <div
-                className="no-results-card"
-                style={{
-                  gridColumn: '1 / -1',
-                  textAlign: 'center',
-                  padding: '40px',
-                  color: 'white'
-                }}
-              >
-                <h3>🥭 No recipes found for "{searchQuery}"</h3>
-                <p>Try our AI recipe generator above with those ingredients!</p>
               </div>
-            ) : (
-              <>
-                <div className="dessert-card card-top-left">
-                  <div className="ornate-frame">
-                    <div className="frame-inner">
-                      <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500" alt="Rose Cake" />
-                    </div>
-                  </div>
-                  <div className="dessert-info">
-                    <h3>Rose Petal Cake</h3>
-                    <p>Infused with organic rosewater and topped with candied petals.</p>
-                  </div>
-                </div>
-
-                <div className="dessert-card card-mid-right">
-                  <div className="ornate-frame">
-                    <div className="frame-inner">
-                      <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=500" alt="Berry Swirls" />
-                    </div>
-                  </div>
-                  <div className="dessert-info">
-                    <h3>Berry Swirls</h3>
-                    <p>Gently folded layers of pastry with a signature berry glaze.</p>
-                  </div>
-                </div>
-              </>
             )}
           </div>
-        </section>
-      </main>
 
-      <footer className="site-footer-scallop">
-        <div className="footer-content-inner">
-          <div className="footer-social-row">
-            <a href="#" className="social-icon-square">FB</a>
-            <a href="#" className="social-icon-square">PN</a>
-            <a href="#" className="social-icon-square">TW</a>
-            <a href="#" className="social-icon-square">IG</a>
+          {/* THE HERO IMAGE */}
+          <div className="hero-image-side">
+            <div className="food-circle-main">
+              <img 
+                src={getHeroImage()} 
+                alt="" 
+                style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: 'cover', 
+                  borderRadius: '50%',
+                  display: 'block' 
+                }} 
+              />
+            </div>
           </div>
-          <nav className="footer-nav-row">
-            <a href="/">Home</a> <span>/</span>
-            <a href="/about">About Us</a> <span>/</span>
-            <a href="/menu">Menu</a> <span>/</span>
-            <a href="/blog">Blog</a> <span>/</span>
-            <a href="/contact">Contact</a> <span>/</span>
-            <a href="/policy">Return Policy</a>
-          </nav>
-          <div className="footer-copyright-row">Copyright © All Right Reserved</div>
-          <p className="footer-tagline-text">Find your sweet discovery today!</p>
-        </div>
-      </footer>
+        </section>
+
+        {/* REAL RECIPES GRID FROM SPOONACULAR */}
+        {recipes.length > 0 && (
+          <div className="results-section">
+            <h2 className="section-title">Verified Results</h2>
+            <div className="dessert-display-grid">
+              
+              {/* Removed 'index' to make your linter happy! */}
+              {recipes.map((recipe) => (
+                
+                <div key={recipe.id} className="dessert-card">
+                  <div className="ornate-frame">
+                    <img src={recipe.image} alt={recipe.title} />
+                  </div>
+                  
+                  <div className="dessert-info">
+                    <h3>{recipe.title}</h3>
+                    <p>⏱️ {recipe.readyInMinutes} mins</p>
+                    <a href={recipe.sourceUrl} target="_blank" rel="noreferrer" className="view-link">
+                      Full Recipe
+                    </a>
+                  </div>
+                </div>
+                
+              ))}
+              
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
