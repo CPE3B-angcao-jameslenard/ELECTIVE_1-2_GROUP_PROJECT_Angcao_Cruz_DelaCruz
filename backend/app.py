@@ -1,5 +1,5 @@
 import os
-import json  # Added this to read the AI's JSON output perfectly
+import requests
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from google import genai
@@ -11,73 +11,63 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-# 2. THE BRAIN
+# 2. THE BRAIN & THE EYES
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+spoon_api_key = os.getenv("SPOONACULAR_API_KEY")
 
 @app.route('/')
 def home():
-    return "DISHcovery AI Python Backend is LIVE and AI-Powered!"
+    return "DISHcovery AI Python Backend is LIVE!"
 
-@app.route('/api/desserts', methods=['GET'])
-def get_desserts():
-    sample_desserts = [
-        { "id": 1, "name": "Matcha Mille Crepe", "origin": "Japan" },
-        { "id": 2, "name": "Tiramisu", "origin": "Italy" },
-        { "id": 3, "name": "Leche Flan", "origin": "Philippines" }
-    ]
-    return jsonify(sample_desserts)
-
-# 3. THE MAGIC
-@app.route('/api/generate-recipe', methods=['POST'])
-def generate_recipe():
+# --- ROUTE 1: THE FINDER (Forgiving Search) ---
+@app.route('/api/search-recipes', methods=['POST'])
+def search_recipes():
     data = request.json
-    ingredients = data.get('ingredients', 'chocolate')
+    ingredients = data.get('ingredients', '')
+    food_type = data.get('foodType', '') 
+    
+    #'query' was used instead of 'includeIngredients' to be more flexible
+    search_query = ingredients.replace(" ", "+")
+    
+    url = f"https://api.spoonacular.com/recipes/complexSearch?query={search_query}&addRecipeInformation=true&number=4&apiKey={spoon_api_key}"
+    
+    if food_type:
+        url += f"&type={food_type}"
 
     try:
-        # THE MASTER PROMPT
-        prompt = f"""You are the backend AI for "DISHcovery AI", a professional recipe application. Your job is to take a list of user-provided ingredients and generate a creative, delicious recipe. 
-        
-        CRITICAL RULE: You must NEVER respond with conversational text. You must ONLY respond with a raw, valid JSON object. Do not use markdown formatting like ```json.
-        
-        Your JSON must follow this exact structure:
-        {{
-          "recipeName": "A catchy name for the dish",
-          "prepTime": "Estimated time in minutes",
-          "difficulty": "Easy, Medium, or Hard",
-          "ingredients": [
-            "Ingredient 1 with exact measurements",
-            "Ingredient 2 with exact measurements"
-          ],
-          "instructions": [
-            "Step 1: Do this.",
-            "Step 2: Do that."
-          ]
-        }}
-        
-        The user's ingredients are: {ingredients}
-        """
-        
-        # Ask Gemini
-        response = client.models.generate_content(
-            model="gemini-3-flash-preview",
-            contents=prompt
-        )
-        
-        # Clean the response and turn it into a real Python dictionary
-        clean_text = response.text.replace("```json", "").replace("```", "").strip()
-        recipe_data = json.loads(clean_text)
-        
-        # Send perfect JSON back to the React frontend!
-        return jsonify({
-            "status": "success",
-            "recipe": recipe_data
-        })
-        
+        response = requests.get(url)
+        if response.status_code == 200:
+            results = response.json().get('results', [])
+            return jsonify({"status": "success", "recipes": results})
+        return jsonify({"status": "error", "message": "Spoonacular Error"}), 500
+            
     except Exception as e:
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+# --- ROUTE 2: THE ADVANCED AI FEATURE ---
+@app.route('/api/generate-meal-plan', methods=['POST'])
+def generate_meal_plan():
+    data = request.json
+    ingredients = data.get('ingredients', '')
+    food_type = data.get('foodType', 'dish') 
+    
+    prompt = f"""
+    Act as a professional Chef. Based on these ingredients: {ingredients}, 
+    create a '3-Day {food_type.title()} Plan'. 
+    Suggest one {food_type} per day. 
+    
+    FORMATTING RULES:
+    1. NEVER use markdown symbols (*, #, _, etc).
+    2. You MUST use double line breaks (press enter twice) between each day.
+    3. Make it readable like a blog post.
+    4. Use emojis.
+    """
+    
+    try:
+        response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
+        return jsonify({"status": "success", "plan": response.text})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(port=5005, debug=True)
