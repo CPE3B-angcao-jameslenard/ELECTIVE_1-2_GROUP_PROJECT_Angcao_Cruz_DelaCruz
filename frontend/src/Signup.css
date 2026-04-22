@@ -1,0 +1,85 @@
+/* The dark background behind the popup */
+.auth-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* The actual popup box */
+.auth-modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  width: 350px;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border: 2px solid #ff99cc; /* Matching your logo pink */
+}
+
+.auth-modal h2 {
+  color: #a3333d; /* Darker brown/pink from your text */
+  margin-bottom: 1.5rem;
+}
+
+.auth-modal form input {
+  width: 90%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+}
+
+/* Matching your pink "AI Chef Plan" button */
+.submit-btn {
+  background-color: #ff66b2;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.2s;
+}
+
+.submit-btn:hover {
+  transform: scale(1.05);
+  background-color: #ff3399;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #999;
+}
+
+.auth-switch {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.auth-switch span {
+  color: #ff66b2; /* DISHcovery Pink */
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.auth-switch span:hover {
+  color: #d81b60; /* Darker pink on hover */
+}
