@@ -1,2 +1,4 @@
-# ELECTIVE_1-2_GROUP_PROJECT_Angcao_Cruz_DelaCruz
-Code repository for our joined Elective 1 and 2 project
+# DISHcovery AI
+**AI-Powered Recipe Finder**
+
+A collaborative project for Elective 1 & 2 - Bulacan State University
