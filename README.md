@@ -96,8 +96,11 @@ Table:
 This table functions as the primary directory for application access and security.
 
 Field Name    | Data Type | Constraints | Description
+
 id            | Integer   | Primary Key | A unique identifier generated for every new account.
+
 username      | String    | Unique      | The user's chosen login name; duplicates are prevented.
+
 password_hash | text      | Not null    | A salted and hashed version of the password for security.
 
 Table:
