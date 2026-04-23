@@ -56,7 +56,7 @@ function App() {
     setErrorMessage("");
 
     try {
-      const response = await fetch('http://localhost:5005/api/search-recipes', {
+      const response = await fetch('https://elective-1-2-group-project-angcao-cruz.onrender.com/api/search-recipes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ingredients, foodType })
@@ -82,7 +82,7 @@ function App() {
     setErrorMessage("");
 
     try {
-      const response = await fetch('http://localhost:5005/api/generate-meal-plan', {
+      const response = await fetch('https://elective-1-2-group-project-angcao-cruz.onrender.com/api/generate-meal-plan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ingredients, foodType })
@@ -105,7 +105,7 @@ function App() {
     }
 
     try {
-      const response = await fetch('http://localhost:5005/api/favorites', {
+      const response = await fetch('https://elective-1-2-group-project-angcao-cruz.onrender.com/api/favorites', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -129,7 +129,7 @@ function App() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:5005/api/favorites/${currentUser.id}`);
+      const response = await fetch(`https://elective-1-2-group-project-angcao-cruz.onrender.com/api/favorites/${currentUser.id}`);
       const data = await response.json();
       if (data.status === "success") {
         setFavoriteList(data.favorites);
