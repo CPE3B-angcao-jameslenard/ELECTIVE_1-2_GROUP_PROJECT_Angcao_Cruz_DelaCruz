@@ -33,6 +33,10 @@ body {
     linear-gradient(180deg, #fbf5eb 0%, #f3eadb 45%, #eadcc8 100%);
 }
 
+button {
+  font: inherit;
+}
+
 .app-wrapper {
   min-height: 100vh;
   width: 100%;
@@ -92,12 +96,40 @@ body {
   align-items: center;
   padding: 18px 24px 12px;
   gap: 20px;
+  flex-wrap: wrap;
+  position: relative;
 }
 
 .brand-block {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.brand-mark-btn,
+.brand-title-btn,
+.menu-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.brand-title-btn {
+  text-align: left;
+}
+
+.brand-mark-btn:focus,
+.brand-title-btn:focus,
+.menu-toggle:focus,
+.header-link-btn:focus,
+.header-primary-btn:focus,
+.search-btn:focus,
+.ai-btn:focus,
+.heart-btn:focus,
+.footer-links button:focus {
+  outline: 2px solid #d5e48a;
+  outline-offset: 3px;
 }
 
 .brand-mark {
@@ -130,12 +162,67 @@ body {
   color: #d5e48a;
 }
 
+.menu-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.menu-toggle span {
+  width: 22px;
+  height: 2px;
+  background: #fff8ef;
+  border-radius: 999px;
+  transition: 0.25s ease;
+}
+
+.side-menu {
+  position: absolute;
+  top: 68px;
+  left: 24px;
+  width: 180px;
+  background: rgba(45, 36, 29, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.18);
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 1200;
+}
+
+.side-menu.open {
+  display: flex;
+}
+
+.side-menu-link {
+  background: transparent;
+  border: none;
+  color: #f7f0e4;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.side-menu-link:hover {
+  background: rgba(213, 228, 138, 0.12);
+  color: #d5e48a;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
   justify-content: flex-end;
+  margin-left: auto;
 }
 
 .welcome-text {
@@ -353,7 +440,8 @@ body {
 }
 
 .results-section,
-.favorites-panel {
+.favorites-panel,
+.page-card {
   padding: 38px 34px 40px;
 }
 
@@ -408,6 +496,17 @@ body {
   margin-bottom: 8px;
 }
 
+.view-link {
+  display: inline-block;
+  color: #6f8b3d;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.view-link:hover {
+  color: #4f3823;
+}
+
 .heart-btn {
   position: absolute;
   top: 12px;
@@ -431,6 +530,148 @@ body {
   text-align: center;
   color: #666;
   padding: 20px 0 10px;
+}
+
+.bubble-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 10px;
+}
+
+.bubble-card {
+  background: linear-gradient(180deg, #fffaf2 0%, #f6efe3 100%);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: 26px 20px 22px;
+  text-align: center;
+  box-shadow: 0 14px 30px rgba(56, 39, 20, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.bubble-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 36px rgba(56, 39, 20, 0.14);
+}
+
+.bubble-avatar {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  padding: 6px;
+  background: linear-gradient(145deg, #d5e48a, #8d6a3d);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+.bubble-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #fff;
+  display: block;
+}
+
+.bubble-card h3 {
+  margin-bottom: 10px;
+  color: #2d241d;
+  font-size: 18px;
+}
+
+.bubble-card p {
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.ack-box {
+  max-width: 780px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+
+.ack-box p + p {
+  margin-top: 14px;
+}
+
+.ack-signature {
+  font-weight: 700;
+  color: #4f3823;
+}
+
+.site-footer {
+  margin-top: 40px;
+  background: linear-gradient(180deg, #4f3823 0%, #2d241d 100%);
+  color: #f7f0e4;
+  padding: 42px 24px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr 0.9fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.footer-brand h3 {
+  font-size: 28px;
+  margin-bottom: 12px;
+  color: #d5e48a;
+}
+
+.footer-brand p {
+  color: rgba(247, 240, 228, 0.78);
+  line-height: 1.7;
+  max-width: 360px;
+}
+
+.footer-links h4,
+.footer-contact h4 {
+  margin-bottom: 14px;
+  color: #d5e48a;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.footer-links button {
+  display: block;
+  background: none;
+  border: none;
+  color: #f7f0e4;
+  padding: 8px 0;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.2s;
+}
+
+.footer-links button:hover {
+  color: #d5e48a;
+}
+
+.footer-contact p {
+  color: rgba(247, 240, 228, 0.82);
+  padding: 6px 0;
+  line-height: 1.5;
+}
+
+.footer-bottom {
+  max-width: 1240px;
+  margin: 28px auto 0;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  color: rgba(247, 240, 228, 0.55);
+  font-size: 14px;
 }
 
 .auth-overlay {
@@ -546,26 +787,43 @@ body {
   .recipe-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .footer-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .footer-contact {
+    grid-column: 1 / -1;
+  }
+
+  .bubble-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
   .top-bar {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
   }
 
   .header-actions {
+    width: 100%;
     justify-content: flex-start;
+    margin-left: 0;
+    gap: 8px;
+    padding-top: 6px;
+    flex-wrap: wrap;
   }
 
   .content-wrapper {
     width: calc(100% - 24px);
     margin-top: 18px;
-    margin-bottom: 40px;
+    margin-bottom: 32px;
   }
 
   .hero-copy {
-    padding: 32px 20px;
+    padding: 28px 18px;
   }
 
   .hero-title {
@@ -573,7 +831,7 @@ body {
   }
 
   .hero-visual {
-    min-height: 320px;
+    min-height: 300px;
   }
 
   .recipe-grid {
@@ -581,7 +839,25 @@ body {
   }
 
   .results-section,
-  .favorites-panel {
+  .favorites-panel,
+  .page-card {
     padding: 26px 18px 30px;
+  }
+
+  .footer-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-bottom {
+    text-align: left;
+  }
+
+  .bubble-avatar {
+    width: 130px;
+    height: 130px;
+  }
+
+  .bubble-card {
+    border-radius: 22px;
   }
 }
