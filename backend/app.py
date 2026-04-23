@@ -11,7 +11,7 @@ from models import db, User, Favorite
 
 load_dotenv()
 
-# --- ADD THESE TWO LINES FOR DEBUGGING ---
+#ADD THESE TWO LINES FOR DEBUGGING
 print(f"🔎 Is .env file found? {os.path.exists('.env')}")
 print(f"🔑 DATABASE_URL value: {os.getenv('DATABASE_URL')}")
 # -----------------------------------------
@@ -19,13 +19,12 @@ print(f"🔑 DATABASE_URL value: {os.getenv('DATABASE_URL')}")
 app = Flask(__name__)
 CORS(app)
 
-# --- DATABASE CONFIGURATION ---
+#ATABASE CONFIGURATION
 # We look for a DATABASE_URL in your .env file. 
-# If it's not there yet, we use a temporary local SQLite file so the app doesn't crash!
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///local_test.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Plug the database into the app
+#Plug the database into the app
 db.init_app(app)
 
 # This magically creates the tables if they don't exist yet

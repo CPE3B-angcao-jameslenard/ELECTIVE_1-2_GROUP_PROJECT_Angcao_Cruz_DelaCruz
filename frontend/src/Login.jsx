@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import './Signup.css'; // We can reuse the exact same CSS!
+import './Signup.css'; 
+import Swal from 'sweetalert2';
 
-// 1. Add onSwitchToSignup here
 const Login = ({ onClose, onLoginSuccess, onSwitchToSignup }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -9,8 +9,7 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // Change this line in Login.jsx:
-        const response = await fetch('https://elective-1-2-group-project-angcao-cruz.onrender.com/api/login', {
+      const response = await fetch('https://elective-1-2-group-project-angcao-cruz.onrender.com/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -19,15 +18,33 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup }) => {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Welcome back!");
-        onLoginSuccess(data.user); // Tells App.jsx who just logged in
-        onClose(); // Closes the modal
+        //SUCCESS POP-UP
+        Swal.fire({
+          title: 'Welcome Back!',
+          text: 'Logged in successfully! 👨‍🍳',
+          icon: 'success',
+          confirmButtonColor: '#4A5D23'
+        });
+        onLoginSuccess(data.user); 
+        onClose(); 
       } else {
-        alert(data.error);
+        //FAILED LOGIN POP-UP (Wrong password, etc.)
+        Swal.fire({
+          title: 'Oops!',
+          text: data.error || 'Invalid username or password.',
+          icon: 'error',
+          confirmButtonColor: '#4A5D23'
+        });
       }
     } catch (err) {
       console.error(err);
-      alert("Backend connection error.");
+      //BACKEND CONNECTION POP-UP
+      Swal.fire({
+        title: 'Connection Error',
+        text: 'The server is currently unresponsive. Please wait a moment while it wakes up!',
+        icon: 'error',
+        confirmButtonColor: '#4A5D23'
+      });
     }
   };
 
@@ -51,10 +68,10 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup }) => {
             onChange={(e) => setPassword(e.target.value)}
             required 
           />
-            {/* 2. ADD THIS NEW TEXT BELOW THE FORM */}
-        <p className="auth-switch">
-          Don't have an account? <span onClick={onSwitchToSignup}>Sign up here</span>
-        </p>
+  
+          <p className="auth-switch">
+            Don't have an account? <span onClick={onSwitchToSignup} style={{cursor: 'pointer', color: '#4A5D23', fontWeight: 'bold'}}>Sign up here</span>
+          </p>
 
           <button type="submit" className="submit-btn">Login</button>
         </form>
