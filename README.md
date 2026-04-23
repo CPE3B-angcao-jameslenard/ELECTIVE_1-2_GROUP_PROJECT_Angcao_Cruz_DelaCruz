@@ -45,7 +45,10 @@ Response: The Backend bundles all this info and sends a Combined Response back t
 
 
 
+
+
 **API DOCUMENTATION**
+
 Overview of System Connectivity
 The DISHcovery AI application operates through a series of structured API endpoints. This "Application Programming Interface" acts as the bridge between the React.js Frontend (the user interface) and the Python Flask Backend (the logic center). The system is designed to handle secure user data, fetch real-time culinary information from Spoonacular, and generate creative content using Google Gemini AI.
 
@@ -82,6 +85,9 @@ Logic: The system performs a database query to find all entries linked to that s
 
 
 
+
+
+
 **DATABASE SCHEMA**
 The DISHcovery application utilizes a relational database structure hosted on Supabase (PostgreSQL). This architecture ensures that user accounts remain secure and that personalized recipe collections are persistent across sessions.
 
@@ -107,6 +113,9 @@ Source_url - text - The direct link to the full cooking instructions.
 Data Relationship Model
 The Logic: One User can have many Favorite recipes, but each record in the favorites table belongs to exactly one user.
 The Connection: This is maintained by the user_id field, which "points" back to the User's unique ID.
+
+
+
 
 
 
