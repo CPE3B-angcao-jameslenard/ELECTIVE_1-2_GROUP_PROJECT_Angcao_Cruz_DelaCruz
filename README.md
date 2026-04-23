@@ -138,13 +138,13 @@ Client Node (User Device)         | Browser             | Runs the React Fronten
 
 Application Server (Render Cloud) | Flask Web App       | The core backend logic (app.py) running on Gunicorn (WSGI Server).
 
-                                  | Spoonacular Client  | Handles outgoing requests to fetch recipe data.
+| Spoonacular Client  | Handles outgoing requests to fetch recipe data.
                                   
 Database Node (Supabase Cloud)    | PostgreSQL Instance | Stores the User and Favorite tables via a secure SQL/TCP connection.
 
 External Services                 | Spoonacular API     | Third-party service providing recipe information.
 
-                                  | Google Gemini AI    | The AI engine used for generating meal plans.
+| Google Gemini AI    | The AI engine used for generating meal plans.
 
 
 The DISHcovery application follows a distributed cloud architecture to ensure security and performance. The diagram below illustrates how the frontend, backend, and database interact across different hosting environments.
