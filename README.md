@@ -95,20 +95,20 @@ The DISHcovery application utilizes a relational database structure hosted on Su
 Table: 
 This table functions as the primary directory for application access and security.
 
-Field Name - Data Type - Constraints - Description
-id - Integer - Primary Key - A unique identifier generated for every new account.
-username - String - Unique - The user's chosen login name; duplicates are prevented.
-password_hash - text - Not null - A salted and hashed version of the password for security.
+Field Name    | Data Type | Constraints | Description
+id            | Integer   | Primary Key | A unique identifier generated for every new account.
+username      | String    | Unique      | The user's chosen login name; duplicates are prevented.
+password_hash | text      | Not null    | A salted and hashed version of the password for security.
 
 Table:
 This table stores the specific recipe metadata that users choose to save to their personal collection.
 
-Field Name - Data Type - Constraints - Description
-id - Integer,Primary Key - A unique identifier for every saved recipe entry.
-user_id - Integer - Foreign Key - Connects the entry to a specific user in the User table.
-recipe_title - String - Not null - The display name of the dish.
-image_url - text - The hosted URL for the recipe's thumbnail image.
-Source_url - text - The direct link to the full cooking instructions.
+Field Name   | Data Type | Constraints | Description
+id           | Integer   | Primary Key | A unique identifier for every saved recipe entry.
+user_id      | Integer   | Foreign Key | Connects the entry to a specific user in the User table.
+recipe_title | String    | Not null    | The display name of the dish.
+image_url    | text      |             |  The hosted URL for the recipe's thumbnail image.
+Source_url   | text      |             | The direct link to the full cooking instructions.
 
 Data Relationship Model
 The Logic: One User can have many Favorite recipes, but each record in the favorites table belongs to exactly one user.
@@ -121,13 +121,13 @@ The Connection: This is maintained by the user_id field, which "points" back to 
 
 **DEPLOYMENT DIAGRAM**
 
-Node / Location - Component - Role & Technology
-Client Node (User Device) - Browser - Runs the React Frontend where users interact with the app.
-Application Server (Render Cloud) - Flask Web App - The core backend logic (app.py) running on Gunicorn (WSGI Server).
-                                 - Spoonacular Client - Handles outgoing requests to fetch recipe data.
-Database Node (Supabase Cloud) - PostgreSQL Instance - Stores the User and Favorite tables via a secure SQL/TCP connection.
-External Services - Spoonacular API - Third-party service providing recipe information.
-                - Google Gemini AI - The AI engine used for generating meal plans.
+Node / Location                   | Component           | Role & Technology
+Client Node (User Device)         | Browser             | Runs the React Frontend where users interact with the app.
+Application Server (Render Cloud) | Flask Web App       | The core backend logic (app.py) running on Gunicorn (WSGI Server).
+                                  | Spoonacular Client  | Handles outgoing requests to fetch recipe data.
+Database Node (Supabase Cloud)    | PostgreSQL Instance | Stores the User and Favorite tables via a secure SQL/TCP connection.
+External Services                 | Spoonacular API     | Third-party service providing recipe information.
+                                  | Google Gemini AI    | The AI engine used for generating meal plans.
 
 
 The DISHcovery application follows a distributed cloud architecture to ensure security and performance. The diagram below illustrates how the frontend, backend, and database interact across different hosting environments.
