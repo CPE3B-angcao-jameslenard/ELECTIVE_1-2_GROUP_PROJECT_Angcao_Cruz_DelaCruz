@@ -6,21 +6,35 @@ import './Signup.css';
 import dev1 from './assets/dev1.png';
 import dev2 from './assets/dev2.jpg';
 import dev3 from './assets/dev3.jpg';
+import Swal from 'sweetalert2';
+
+
 
 function App() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const recipesPerPage = 10;
   const [ingredients, setIngredients] = useState("");
   const [foodType, setFoodType] = useState("");
   const [recipes, setRecipes] = useState([]);
   const [aiDessertPlan, setAiDessertPlan] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isThinking, setIsThinking] = useState(false);
+  const [isFavoritesLoading, setIsFavoritesLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showSignup, setShowSignup] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
   const [favoriteList, setFavoriteList] = useState([]);
   const [showFavoritesView, setShowFavoritesView] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activePage, setActivePage] = useState("home");
+  const APP_ID = import.meta.env.VITE_EDAMAM_APP_ID; 
+  const APP_KEY = import.meta.env.VITE_EDAMAM_APP_KEY;
+
+  const [currentUser, setCurrentUser] = useState(() => {
+  //Checks the "Save File" every time the page loads
+  const savedUser = localStorage.getItem('user');
+  return savedUser ? JSON.parse(savedUser) : null;
+});
 
   const goHome = () => {
     setActivePage("home");
@@ -50,35 +64,56 @@ function App() {
 
   const toggleMenu = () => setMenuOpen((prev) => !prev);
 
-  const searchSpoonacular = async () => {
+  const searchAllRecipes = async () => {
     if (!ingredients.trim()) return;
-    setIsLoading(true);
+    setIsSearching(true);
     setErrorMessage("");
+    setCurrentPage(1); //Resets to page 1 on new search
 
     try {
-      const response = await fetch('https://elective-1-2-group-project-angcao-cruz.onrender.com/api/search-recipes', {
+      //Fetch from the Render Backend (Spoonacular)
+      const spoonPromise = fetch('https://elective-1-2-group-project-angcao-cruz.onrender.com/api/search-recipes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ingredients, foodType })
-      });
-      const data = await response.json();
+      }).then(res => res.json());
 
-      if (data.status === "success" && data.recipes.length > 0) {
-        setRecipes(data.recipes);
+      //Fetch from Edamam (V2 Endpoint)
+      const edamamPromise = fetch(
+        `https://api.edamam.com/api/recipes/v2?type=public&q=${ingredients}&app_id=${APP_ID}&app_key=${APP_KEY}`
+      ).then(res => res.json());
+
+      //Run both
+      const [spoonData, edamamData] = await Promise.all([spoonPromise, edamamPromise]);
+
+      //Format Edamam results to match the card style
+      const formattedEdamam = edamamData.hits?.map(hit => ({
+        id: hit.recipe.uri,
+        title: hit.recipe.label,
+        image: hit.recipe.image,
+        sourceUrl: hit.recipe.url,
+        readyInMinutes: hit.recipe.totalTime > 0 ? hit.recipe.totalTime : "30",
+      })) || [];
+
+      //Combine them (Spoonacular first, then Edamam)
+      const combined = [...(spoonData.recipes || []), ...formattedEdamam];
+      
+      if (combined.length === 0) {
+        setErrorMessage("No recipes found in either database.");
       } else {
-        setErrorMessage("Spoonacular couldn't find a match, but try the AI Chef!");
+        setRecipes(combined);
       }
     } catch (error) {
-      console.error("Fetch error:", error);
-      setErrorMessage("Connection error. Is Flask running?");
+      console.error("Search error:", error);
+      setErrorMessage("Error connecting to recipe sources.");
     } finally {
-      setIsLoading(false);
+      setIsSearching(false);
     }
   };
 
   const generateAiPlan = async () => {
     if (!ingredients.trim()) return;
-    setIsLoading(true);
+    setIsThinking(true);
     setErrorMessage("");
 
     try {
@@ -93,13 +128,18 @@ function App() {
       console.error("AI error:", error);
       setErrorMessage("AI Chef connection error.");
     } finally {
-      setIsLoading(false);
+      setIsThinking(false);
     }
   };
 
   const handleSaveFavorite = async (recipe) => {
     if (!currentUser) {
-      alert("Please Login first to save favorites! ✨");
+      Swal.fire({
+        title: 'Authentication Required',
+        text: 'Please login first to save favorites! ✨',
+        icon: 'warning',
+        confirmButtonColor: '#4A5D23' // Matching your green theme!
+      });
       setShowLogin(true);
       return;
     }
@@ -117,16 +157,21 @@ function App() {
         })
       });
 
-      const data = await response.json();
-      alert(data.message);
+      const data = await response.json();  
+      Swal.fire({
+        title: 'Success!',
+        text: data.message,
+        icon: 'success',
+        confirmButtonColor: '#4A5D23'
+      });
     } catch (err) {
       console.error("Error saving favorite:", err);
     }
   };
 
-  const viewFavorites = async () => {
+const viewFavorites = async () => {
     if (!currentUser) return;
-    setIsLoading(true);
+    setIsFavoritesLoading(true); // START the favorites loader
 
     try {
       const response = await fetch(`https://elective-1-2-group-project-angcao-cruz.onrender.com/api/favorites/${currentUser.id}`);
@@ -140,7 +185,7 @@ function App() {
     } catch (err) {
       console.error("Error loading favorites:", err);
     } finally {
-      setIsLoading(false);
+      setIsFavoritesLoading(false); //halts the favorites loader
     }
   };
 
@@ -213,6 +258,12 @@ function App() {
     </section>
   );
 
+  //Pagination MAath
+  const indexOfLastRecipe = currentPage * recipesPerPage;
+  const indexOfFirstRecipe = indexOfLastRecipe - recipesPerPage;
+  const currentRecipes = recipes.slice(indexOfFirstRecipe, indexOfLastRecipe);
+  const totalPages = Math.ceil(recipes.length / recipesPerPage);
+
   return (
     <div className="app-wrapper">
       <header className="main-site-header">
@@ -240,7 +291,13 @@ function App() {
                 <span className="welcome-text">👨‍🍳 Welcome, {currentUser.username}!</span>
                 <button className="header-link-btn" onClick={goHome}>Home</button>
                 <button className="header-primary-btn" onClick={viewFavorites}>My Favorites ❤️</button>
-                <button className="header-link-btn" onClick={() => { setCurrentUser(null); setShowFavoritesView(false); }}>Logout</button>
+                
+                <button className="header-link-btn" onClick={() => { 
+                  setCurrentUser(null); 
+                  setShowFavoritesView(false); 
+                  // This deletes the "Save File" so the next user isn't logged in as you
+                  localStorage.removeItem('user'); 
+                }}>Logout</button>
               </>
             ) : (
               <>
@@ -313,15 +370,28 @@ function App() {
                   </select>
 
                   <div className="action-row">
-                    <button onClick={searchSpoonacular} disabled={isLoading} className="search-btn">
-                      {isLoading ? "Searching..." : "Find Recipes"}
+                    <button 
+                      onClick={searchAllRecipes} 
+                      disabled={isSearching || isThinking} 
+                      className="search-btn"
+                    >
+                      {isSearching ? "Searching..." : "Find Recipes"}
                     </button>
-                    <button onClick={generateAiPlan} disabled={isLoading} className="ai-btn">
-                      {isLoading ? "Thinking..." : "AI Chef Plan"}
+                    
+                    <button 
+                      onClick={generateAiPlan} 
+                      disabled={isSearching || isThinking} 
+                      className="ai-btn"
+                    >
+                      {isThinking ? "Thinking..." : "AI Chef Plan"}
                     </button>
+
+                    {/* Show the spinner if EITHER of them are loading */}
+                    {(isSearching || isThinking || isFavoritesLoading) && <div className="loader-small"></div>}
                   </div>
                 </div>
 
+                
                 {errorMessage && <div className="error-msg">⚠️ {errorMessage}</div>}
 
                 {aiDessertPlan && (
@@ -347,7 +417,8 @@ function App() {
                 </div>
 
                 <div className="recipe-grid">
-                  {recipes.map((recipe) => (
+                  {/*Use currentRecipes instead of recipes*/}
+                  {currentRecipes.map((recipe) => (
                     <article key={recipe.id} className="recipe-card">
                       <button className="heart-btn" onClick={() => handleSaveFavorite(recipe)} title="Save to Favorites">
                         ❤️
@@ -363,6 +434,43 @@ function App() {
                     </article>
                   ))}
                 </div>
+
+                {/*Add the Pagination Buttons below the grid*/}
+                {recipes.length > recipesPerPage && (
+                  <div className="pagination-bar">
+                    {/* PREV BUTTON */}
+                    <button 
+                      disabled={currentPage === 1} 
+                      onClick={() => {
+                        setCurrentPage(prev => prev - 1); 
+                        // The setTimeout forces the browser to wait a tiny fraction of a second
+                        setTimeout(() => {
+                          document.getElementById('recipes').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 100);
+                      }}
+                      className="page-btn"
+                    >
+                      Prev
+                    </button>
+
+                    <span className="page-info">Page {currentPage} of {totalPages}</span>
+
+                    {/* NEXT BUTTON */}
+                    <button 
+                      disabled={currentPage === totalPages} 
+                      onClick={() => {
+                        setCurrentPage(prev => prev + 1); 
+                        setTimeout(() => {
+                          document.getElementById('recipes').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 100);
+                      }}
+                      className="page-btn"
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
+
               </section>
             )}
           </>
@@ -408,7 +516,11 @@ function App() {
       {showLogin && (
         <Login
           onClose={() => setShowLogin(false)}
-          onLoginSuccess={(userData) => setCurrentUser(userData)}
+          onLoginSuccess={(userData) => {
+            setCurrentUser(userData);
+            //Creates the "Save File" in the browser
+            localStorage.setItem('user', JSON.stringify(userData));
+          }}
           onSwitchToSignup={() => {
             setShowLogin(false);
             setShowSignup(true);

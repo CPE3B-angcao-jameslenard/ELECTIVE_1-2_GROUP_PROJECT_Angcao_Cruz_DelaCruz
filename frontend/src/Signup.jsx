@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Swal from 'sweetalert2';
 
 const Signup = ({ onClose, onSwitchToLogin }) => {
   const [username, setUsername] = useState('');
@@ -7,7 +8,8 @@ const Signup = ({ onClose, onSwitchToLogin }) => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://127.0.0.1:5005/api/signup', {
+      // FIX: Changed from localhost to your Render URL
+      const response = await fetch('https://elective-1-2-group-project-angcao-cruz.onrender.com/api/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -16,14 +18,31 @@ const Signup = ({ onClose, onSwitchToLogin }) => {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Success! Account created.");
-        onClose(); // Close the form after success
+        // SUCCESS POP-UP
+        Swal.fire({
+          title: 'Welcome to the Team!',
+          text: 'Account created successfully. You can now log in! 👨‍🍳',
+          icon: 'success',
+          confirmButtonColor: '#4A5D23'
+        });
+        onClose(); 
       } else {
-        alert(data.error);
+        // ERROR POP-UP (e.g., Username already taken)
+        Swal.fire({
+          title: 'Oops!',
+          text: data.error || 'Something went wrong during signup.',
+          icon: 'error',
+          confirmButtonColor: '#4A5D23'
+        });
       }
     } catch (err) {
       console.error("Signup error details:", err);
-      alert("Backend is not running!");
+      Swal.fire({
+        title: 'Connection Error',
+        text: 'The Kitchen (Backend) is currently closed. Please try again in a minute!',
+        icon: 'error',
+        confirmButtonColor: '#4A5D23'
+      });
     }
   };
 
@@ -47,10 +66,9 @@ const Signup = ({ onClose, onSwitchToLogin }) => {
             onChange={(e) => setPassword(e.target.value)}
             required 
           />
-          {/* 2. ADD THIS NEW TEXT BELOW THE FORM */}
-        <p className="auth-switch">
-          Already have an account? <span onClick={onSwitchToLogin}>Log in here</span>
-        </p>
+          <p className="auth-switch">
+            Already have an account? <span onClick={onSwitchToLogin} style={{cursor: 'pointer', color: '#4A5D23', fontWeight: 'bold'}}>Log in here</span>
+          </p>
           <button type="submit" className="submit-btn">Create Account</button>
         </form>
       </div>
