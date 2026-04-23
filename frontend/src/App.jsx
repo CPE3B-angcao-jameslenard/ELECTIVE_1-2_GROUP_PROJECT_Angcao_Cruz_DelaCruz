@@ -531,15 +531,6 @@ const viewFavorites = async () => {
           </div>
         </div>
 
-        <div className="footer-bottom">
-          <div className="academic-credits">
-            <p>Developed by BS Computer Engineering Students</p>
-            <p><strong>Bulacan State University</strong></p>
-          </div>
-          <p>© 2026 DISHcovery. All rights reserved.</p>
-        </div>
-      </footer>
-
       {showSignup && (
         <Signup
           onClose={() => setShowSignup(false)}
@@ -564,7 +555,16 @@ const viewFavorites = async () => {
           }}
         />
       )}
-    </div>
+
+       <div className="footer-bottom">
+          <div className="academic-credits">
+            <p>Developed by BS Computer Engineering Students</p>
+            <p><strong>Bulacan State University</strong></p>
+          </div>
+          <p>© 2026 DISHcovery. All rights reserved.</p>
+        </div>
+      </footer>
+    </div> 
   );
 }
 
