@@ -85,14 +85,14 @@ def signup():
     # 3. Scramble the password for safety
     hashed_password = generate_password_hash(password)
 
-    # 4. Create the new user and save them to Supabase!
+    # 4. Create the new user and save them to Supabase
     new_user = User(username=username, password_hash=hashed_password)
     db.session.add(new_user)
     db.session.commit()
 
     return jsonify({"message": "User created successfully!", "user_id": new_user.id}), 201
 
-# --- ROUTE: SAVE A FAVORITE ---
+#ROUTE: SAVE A FAVORITE
 @app.route('/api/favorites', methods=['POST'])
 def add_favorite():
     data = request.json
@@ -109,7 +109,7 @@ def add_favorite():
     if existing:
         return jsonify({"message": "Already in favorites!"}), 200
 
-    # 🐛 BUG FIX: We now use your exact column names: recipe_title and image_url
+    # 🐛 BUG FIX:Now uses exact column names: recipe_title and image_url
     new_fav = Favorite(
         user_id=data.get('user_id'), 
         recipe_id=str(data.get('recipe_id')), 
@@ -123,7 +123,7 @@ def add_favorite():
     return jsonify({"message": "Added to favorites! ❤️"}), 201
 
 
-# --- ROUTE: GET USER FAVORITES ---
+#ROUTE: GET USER FAVORITES
 @app.route('/api/favorites/<int:user_id>', methods=['GET'])
 def get_favorites(user_id):
     user_favorites = Favorite.query.filter_by(user_id=user_id).all()
@@ -133,15 +133,14 @@ def get_favorites(user_id):
         favorites_list.append({
             "id": fav.id,
             "recipe_id": fav.recipe_id,
-            # 🐛 BUG FIX: We map your database columns back to what React expects
             "title": fav.recipe_title, 
             "image": fav.image_url,
-            "sourceUrl": fav.source_url #SEND IT BACK TO REACT
+            "sourceUrl": fav.source_url #sends it back to REACT
         })
         
     return jsonify({"status": "success", "favorites": favorites_list}), 200
 
-# --- ROUTE 1: THE FINDER (Forgiving Search) ---
+#ROUTE 1: THE FINDER (Forgiving Search)
 @app.route('/api/search-recipes', methods=['POST'])
 def search_recipes():
     data = request.json
@@ -166,7 +165,7 @@ def search_recipes():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-# --- ROUTE 2: THE ADVANCED AI FEATURE ---
+#ROUTE 2: THE ADVANCED AI FEATURE
 @app.route('/api/generate-meal-plan', methods=['POST'])
 def generate_meal_plan():
     data = request.json
@@ -186,7 +185,7 @@ def generate_meal_plan():
     """
     
     try:
-        response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
         return jsonify({"status": "success", "plan": response.text})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
