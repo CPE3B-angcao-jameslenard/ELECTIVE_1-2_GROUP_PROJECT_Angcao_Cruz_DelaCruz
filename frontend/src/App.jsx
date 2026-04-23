@@ -3,6 +3,9 @@ import './App.css';
 import Signup from './Signup';
 import Login from './Login';
 import './Signup.css';
+import dev1 from './assets/dev1.png';
+import dev2 from './assets/dev2.jpg';
+import dev3 from './assets/dev3.jpg';
 
 function App() {
   const [ingredients, setIngredients] = useState("");
@@ -16,6 +19,36 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [favoriteList, setFavoriteList] = useState([]);
   const [showFavoritesView, setShowFavoritesView] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activePage, setActivePage] = useState("home");
+
+  const goHome = () => {
+    setActivePage("home");
+    setShowFavoritesView(false);
+    setMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const goAboutUs = () => {
+    setActivePage("about");
+    setShowFavoritesView(false);
+    setMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const goAcknowledgement = () => {
+    setActivePage("acknowledgement");
+    setShowFavoritesView(false);
+    setMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const scrollToFooter = () => {
+    setMenuOpen(false);
+    document.getElementById('site-footer')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const toggleMenu = () => setMenuOpen((prev) => !prev);
 
   const searchSpoonacular = async () => {
     if (!ingredients.trim()) return;
@@ -23,7 +56,7 @@ function App() {
     setErrorMessage("");
 
     try {
-      const response = await fetch('https://elective-1-2-group-project-angcao-cruz.onrender.com/api/search-recipes', {
+      const response = await fetch('http://localhost:5005/api/search-recipes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ingredients, foodType })
@@ -49,7 +82,7 @@ function App() {
     setErrorMessage("");
 
     try {
-      const response = await fetch('https://elective-1-2-group-project-angcao-cruz.onrender.com/api/generate-meal-plan', {
+      const response = await fetch('http://localhost:5005/api/generate-meal-plan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ingredients, foodType })
@@ -72,7 +105,7 @@ function App() {
     }
 
     try {
-      const response = await fetch('https://elective-1-2-group-project-angcao-cruz.onrender.com/api/favorites', {
+      const response = await fetch('http://localhost:5005/api/favorites', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -94,12 +127,15 @@ function App() {
   const viewFavorites = async () => {
     if (!currentUser) return;
     setIsLoading(true);
+
     try {
-      const response = await fetch(`https://elective-1-2-group-project-angcao-cruz.onrender.com/api/favorites/${currentUser.id}`);
+      const response = await fetch(`http://localhost:5005/api/favorites/${currentUser.id}`);
       const data = await response.json();
       if (data.status === "success") {
         setFavoriteList(data.favorites);
         setShowFavoritesView(true);
+        setActivePage("home");
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } catch (err) {
       console.error("Error loading favorites:", err);
@@ -127,24 +163,82 @@ function App() {
     return "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=1200";
   };
 
+  const AboutUsPage = () => (
+    <section className="page-card glass-card">
+      <div className="section-heading">
+        <p className="eyebrow">About Us</p>
+        <h2 className="section-title">Meet the Developers</h2>
+      </div>
+
+      <div className="bubble-grid">
+        <article className="bubble-card">
+          <div className="bubble-avatar">
+            <img src={dev1} alt="Developer 1" />
+          </div>
+          <h3>Ashley Mae D. Cruz</h3>
+          <p>Frontend designer focused on creating clean, responsive, and user-friendly interfaces for every device.</p>
+        </article>
+
+        <article className="bubble-card">
+          <div className="bubble-avatar">
+            <img src={dev2} alt="Developer 2" />
+          </div>
+          <h3>James Lenard M. Angcao</h3>
+          <p>Backend developer responsible for API logic, data handling, and smooth integration with the recipe services.</p>
+        </article>
+
+        <article className="bubble-card">
+          <div className="bubble-avatar">
+            <img src={dev3} alt="Developer 3" />
+          </div>
+          <h3>Josephine B. Dela Cruz</h3>
+          <p>Full-stack contributor who helped shape the app structure, menu flow, and overall recipe experience.</p>
+        </article>
+      </div>
+    </section>
+  );
+
+  const AcknowledgementPage = () => (
+    <section className="page-card glass-card">
+      <div className="section-heading">
+        <p className="eyebrow">Acknowledgement</p>
+        <h2 className="section-title">For the Person Checking This Project</h2>
+      </div>
+
+      <div className="ack-box">
+        <p>Thank you for taking the time to check this project. Your feedback, guidance, and support are appreciated.</p>
+        <p>This project was created with care to provide a pleasant recipe-searching experience with responsive design, simple navigation, and a modern layout.</p>
+        <p className="ack-signature">Respectfully submitted by the DISHcovery development team.</p>
+      </div>
+    </section>
+  );
+
   return (
     <div className="app-wrapper">
       <header className="main-site-header">
         <div className="top-bar">
           <div className="brand-block">
-            <div className="brand-mark">
-              <span className="brand-line line-1"></span>
-              <span className="brand-line line-2"></span>
-              <span className="brand-line line-3"></span>
-            </div>
-            <h1 className="header-logo-text">DISHcovery</h1>
+            <button className="menu-toggle" onClick={toggleMenu} aria-label="Toggle menu" aria-expanded={menuOpen} aria-controls="side-menu">
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+
+            <button className="brand-title-btn" onClick={goHome} aria-label="Go to home">
+              <h1 className="header-logo-text">DISHcovery</h1>
+            </button>
+          </div>
+
+          <div className={`side-menu ${menuOpen ? 'open' : ''}`} id="side-menu">
+            <button onClick={goHome} className="side-menu-link">Home</button>
+            <button onClick={scrollToFooter} className="side-menu-link">Footer</button>
           </div>
 
           <div className="header-actions">
             {currentUser ? (
               <>
                 <span className="welcome-text">👨‍🍳 Welcome, {currentUser.username}!</span>
-                <button className="header-link-btn" onClick={() => setShowFavoritesView(false)}>Home</button>
+                <button className="header-link-btn" onClick={goHome}>Home</button>
                 <button className="header-primary-btn" onClick={viewFavorites}>My Favorites ❤️</button>
                 <button className="header-link-btn" onClick={() => { setCurrentUser(null); setShowFavoritesView(false); }}>Logout</button>
               </>
@@ -159,7 +253,11 @@ function App() {
       </header>
 
       <main className="content-wrapper" id="home">
-        {showFavoritesView ? (
+        {activePage === "about" ? (
+          <AboutUsPage />
+        ) : activePage === "acknowledgement" ? (
+          <AcknowledgementPage />
+        ) : showFavoritesView ? (
           <section className="favorites-panel glass-card">
             <div className="section-heading">
               <p className="eyebrow">Saved Collection</p>
@@ -177,9 +275,7 @@ function App() {
                     </div>
                     <div className="recipe-body">
                       <h3>{recipe.title}</h3>
-                      <a href={recipe.sourceUrl} target="_blank" rel="noreferrer" className="view-link">
-                        Full Recipe
-                      </a>
+                      <a href={recipe.sourceUrl} target="_blank" rel="noreferrer" className="view-link">Full Recipe</a>
                     </div>
                   </article>
                 ))}
@@ -253,24 +349,16 @@ function App() {
                 <div className="recipe-grid">
                   {recipes.map((recipe) => (
                     <article key={recipe.id} className="recipe-card">
-                      <button
-                        className="heart-btn"
-                        onClick={() => handleSaveFavorite(recipe)}
-                        title="Save to Favorites"
-                      >
+                      <button className="heart-btn" onClick={() => handleSaveFavorite(recipe)} title="Save to Favorites">
                         ❤️
                       </button>
-
                       <div className="recipe-image-wrap">
                         <img src={recipe.image} alt={recipe.title} />
                       </div>
-
                       <div className="recipe-body">
                         <p className="recipe-meta">⏱️ {recipe.readyInMinutes} mins</p>
                         <h3>{recipe.title}</h3>
-                        <a href={recipe.sourceUrl} target="_blank" rel="noreferrer" className="view-link">
-                          Full Recipe
-                        </a>
+                        <a href={recipe.sourceUrl} target="_blank" rel="noreferrer" className="view-link">Full Recipe</a>
                       </div>
                     </article>
                   ))}
@@ -280,6 +368,32 @@ function App() {
           </>
         )}
       </main>
+
+      <footer className="site-footer" id="site-footer">
+        <div className="footer-inner">
+          <div className="footer-brand">
+            <h3>DISHcovery</h3>
+            <p>Find recipes, save favorites, and discover meals that fit your taste, all in one cozy recipe experience.</p>
+          </div>
+
+          <div className="footer-links">
+            <h4>Navigate</h4>
+            <button onClick={goAboutUs}>About Us</button>
+            <button onClick={goAcknowledgement}>Acknowledgement</button>
+          </div>
+
+          <div className="footer-contact">
+            <h4>Contact</h4>
+            <p>📍 Malolos City, Bulacan, Central Luzon, PH</p>
+            <p>✉️ support@dishcovery.app</p>
+            <p>☎️ +63 992 368 9747</p>
+          </div>
+        </div>
+
+        <div className="footer-bottom">
+          <p>© 2026 DISHcovery. All rights reserved.</p>
+        </div>
+      </footer>
 
       {showSignup && (
         <Signup
