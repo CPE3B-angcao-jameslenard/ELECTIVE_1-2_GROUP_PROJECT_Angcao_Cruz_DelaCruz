@@ -93,6 +93,8 @@ function App() {
         image: hit.recipe.image,
         sourceUrl: hit.recipe.url,
         readyInMinutes: hit.recipe.totalTime > 0 ? hit.recipe.totalTime : "30",
+        calories: Math.round(hit.recipe.calories), 
+        protein: Math.round(hit.recipe.totalNutrients?.PROCNT?.quantity || 0)
       })) || [];
 
       //Combine them (Spoonacular first, then Edamam)
@@ -330,10 +332,16 @@ const viewFavorites = async () => {
                     <div className="recipe-image-wrap">
                       <img src={recipe.image} alt={recipe.title} />
                     </div>
-                    <div className="recipe-body">
-                      <h3>{recipe.title}</h3>
-                      <a href={recipe.sourceUrl} target="_blank" rel="noreferrer" className="view-link">Full Recipe</a>
-                    </div>
+                      <div className="recipe-body">
+                        <p className="recipe-meta">
+                          ⏱️ {recipe.readyInMinutes} mins 
+                          {recipe.calories && ` | 🔥 ${recipe.calories} kcal`}
+                        </p>
+                        <h3>{recipe.title}</h3>                     
+                        {recipe.protein > 0 && <span className="nutrition-tag">{recipe.protein}g Protein</span>}
+                        
+                        <a href={recipe.sourceUrl} target="_blank" rel="noreferrer" className="view-link">Full Recipe</a>
+                      </div>
                   </article>
                 ))}
               </div>
@@ -427,8 +435,16 @@ const viewFavorites = async () => {
                         <img src={recipe.image} alt={recipe.title} />
                       </div>
                       <div className="recipe-body">
-                        <p className="recipe-meta">⏱️ {recipe.readyInMinutes} mins</p>
+                        <p className="recipe-meta">
+                          ⏱️ {recipe.readyInMinutes} mins 
+                          {recipe.calories && ` | 🔥 ${recipe.calories} kcal`}
+                        </p>
+                        
                         <h3>{recipe.title}</h3>
+
+                        {/* Only shows the protein tag if there is protein data */}
+                        {recipe.protein > 0 && <span className="nutrition-tag">{recipe.protein}g Protein</span>}
+                        
                         <a href={recipe.sourceUrl} target="_blank" rel="noreferrer" className="view-link">Full Recipe</a>
                       </div>
                     </article>
@@ -499,6 +515,10 @@ const viewFavorites = async () => {
         </div>
 
         <div className="footer-bottom">
+          <div className="academic-credits">
+            <p>Developed by BS Computer Engineering Students</p>
+            <p><strong>Bulacan State University</strong></p>
+          </div>
           <p>© 2026 DISHcovery. All rights reserved.</p>
         </div>
       </footer>
