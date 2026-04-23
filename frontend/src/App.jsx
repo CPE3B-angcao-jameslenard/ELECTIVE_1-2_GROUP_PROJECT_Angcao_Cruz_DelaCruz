@@ -93,6 +93,10 @@ function App() {
         image: hit.recipe.image,
         sourceUrl: hit.recipe.url,
         readyInMinutes: hit.recipe.totalTime > 0 ? hit.recipe.totalTime : "30",
+        calories: Math.round(hit.recipe.calories),
+        protein: Math.round(hit.recipe.totalNutrients?.PROCNT?.quantity || 0),
+        fat: Math.round(hit.recipe.totalNutrients?.FAT?.quantity || 0),
+        carbs: Math.round(hit.recipe.totalNutrients?.CHOCDF?.quantity || 0)
       })) || [];
 
       //Combine them (Spoonacular first, then Edamam)
@@ -330,10 +334,25 @@ const viewFavorites = async () => {
                     <div className="recipe-image-wrap">
                       <img src={recipe.image} alt={recipe.title} />
                     </div>
-                    <div className="recipe-body">
-                      <h3>{recipe.title}</h3>
-                      <a href={recipe.sourceUrl} target="_blank" rel="noreferrer" className="view-link">Full Recipe</a>
-                    </div>
+                      <div className="recipe-body">
+                        <p className="recipe-meta">
+                          ⏱️ {recipe.readyInMinutes} mins | 🔥 {recipe.calories} kcal
+                        </p>
+                        
+                        <h3>{recipe.title}</h3>
+
+                        <div className="nutrition-row" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+                          {recipe.protein > 0 && <span className="nutrition-tag">{recipe.protein}g Protein</span>}
+                          {recipe.fat > 0 && <span className="nutrition-tag">{recipe.fat}g Fat</span>}
+                          {recipe.carbs > 0 && <span className="nutrition-tag">{recipe.carbs}g Carbs</span>}
+                        </div>
+                        
+                        <div style={{ marginTop: 'auto' }}>
+                          <a href={recipe.sourceUrl} target="_blank" rel="noreferrer" className="view-link" style={{ fontWeight: 'bold', display: 'block' }}>
+                            Full Recipe
+                          </a>
+                        </div>
+                      </div>
                   </article>
                 ))}
               </div>
@@ -427,9 +446,23 @@ const viewFavorites = async () => {
                         <img src={recipe.image} alt={recipe.title} />
                       </div>
                       <div className="recipe-body">
-                        <p className="recipe-meta">⏱️ {recipe.readyInMinutes} mins</p>
+                        <p className="recipe-meta">
+                          ⏱️ {recipe.readyInMinutes} mins | 🔥 {recipe.calories} kcal
+                        </p>
+                        
                         <h3>{recipe.title}</h3>
-                        <a href={recipe.sourceUrl} target="_blank" rel="noreferrer" className="view-link">Full Recipe</a>
+
+                        <div className="nutrition-row" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+                          {recipe.protein > 0 && <span className="nutrition-tag">{recipe.protein}g Protein</span>}
+                          {recipe.fat > 0 && <span className="nutrition-tag">{recipe.fat}g Fat</span>}
+                          {recipe.carbs > 0 && <span className="nutrition-tag">{recipe.carbs}g Carbs</span>}
+                        </div>
+                        
+                        <div style={{ marginTop: 'auto' }}>
+                          <a href={recipe.sourceUrl} target="_blank" rel="noreferrer" className="view-link" style={{ fontWeight: 'bold', display: 'block' }}>
+                            Full Recipe
+                          </a>
+                        </div>
                       </div>
                     </article>
                   ))}
@@ -499,6 +532,10 @@ const viewFavorites = async () => {
         </div>
 
         <div className="footer-bottom">
+          <div className="academic-credits">
+            <p>Developed by BS Computer Engineering Students</p>
+            <p><strong>Bulacan State University</strong></p>
+          </div>
           <p>© 2026 DISHcovery. All rights reserved.</p>
         </div>
       </footer>

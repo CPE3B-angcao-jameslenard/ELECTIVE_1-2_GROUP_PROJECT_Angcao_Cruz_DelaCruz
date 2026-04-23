@@ -908,3 +908,52 @@ button {
   font-weight: bold;
   color: #4A5D23;
 }
+
+.footer-bottom {
+  text-align: center;
+  padding: 20px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.9rem;
+  line-height: 1.6; 
+}
+
+.academic-credits {
+  margin-bottom: 10px;
+  color: #bdc3c7; 
+}
+
+/*Nutrition Tag Styling */
+.nutrition-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.nutrition-tag {
+  display: inline-block;
+  background: #f1f8e9;
+  color: #4A5D23;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border: 1px solid #c5e1a5;
+  white-space: nowrap;
+}
+
+.view-link {
+  display: block;
+  margin-top: 5px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.recipe-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #7f8c8d;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
