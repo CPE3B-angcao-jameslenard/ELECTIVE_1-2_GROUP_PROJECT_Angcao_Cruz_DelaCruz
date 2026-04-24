@@ -79,8 +79,6 @@ Endpoint Method Description
 
 
 ​```mermaid
-
-
 graph LR
     subgraph "Public Internet"
         Domain[dishcovery-ai.com]
@@ -108,8 +106,6 @@ graph LR
     style FE fill:#000,stroke:#fff,color:#fff
     style BE fill:#46a394,stroke:#333,color:#fff
     style DB fill:#3ecf8e,stroke:#333,color:#fff
-
-
 
 ```
 
