@@ -75,7 +75,7 @@ Endpoint Method Description
 ​```mermaid
 graph LR
     subgraph "Public Internet"
-        Domain[dishcovery-ai.com]
+        Domain[dishcovery-ai]
     end
 
     subgraph "Vercel Platform"
