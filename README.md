@@ -9,44 +9,20 @@ A collaborative project for Elective 1 & 2 - Bulacan State University
 ​4.1 System Architecture Diagram
 ​This diagram shows how the user's browser interacts with our cloud infrastructure and external intelligence services.
 
-graph TD
-    %% Nodes
-    User((User Browser))
-    FE[Frontend UI <br/><i>React/Vercel</i>]
-    BE[Backend <br/><i>Flask/Render</i>]
-    DB[(Supabase Database <br/><i>PostgreSQL</i>)]
-    Gemini{Google Gemini AI <br/><i>GenAI SDK</i>}
-    Edamam[Edamam Nutrition API]
-    Spoon[Spoonacular API]
-
-    %% Connections
-    User -->|React/Vercel| FE
-    User -->|REST API| BE
-    FE -->|API Requests| BE
-    BE -->|SQL Queries| DB
-    BE -->|GenAI SDK| Gemini
-    BE -->|HTTP Request| Edamam
-    BE -->|HTTP Request| Spoon
-
-    %% Styling
-    style FE fill:#239120,stroke:#333,stroke-width:2px,color:#fff
-    style BE fill:#005c99,stroke:#333,stroke-width:2px,color:#fff
-    style DB fill:#3ecf8e,stroke:#333,stroke-width:2px,color:#fff
-    style Gemini fill:#f4b400,stroke:#333,stroke-width:2px
-
-
+<img width="1284" height="928" alt="Image" src="https://github.com/user-attachments/assets/a34410a4-613a-4f81-bf0b-8b4a80808d37" />
 
 
 4.2 API Documentation
 
 ​Our backend serves as a centralized hub for data orchestration and security.
 
-Endpoint Method Description
-/api/signup POST Registers a new user and hashes passwords.
-/api/login POST Authenticates user and returns session data.
-/api/search-recipes POST Fetches recipes & nutrition data from Edamam.
-/api/generate-meal-plan POST Connects to Gemini Pro for AI meal generation.
-/api/favorites POST Saves a recipe to the Supabase database.
+| Endpoint               | Method   | Description                                   |
+| ---------------------- | -------- | --------------------------------------------- |
+|/api/signup             | POST     |Registers a new user and hashes passwords.     |
+|/api/login              | POST     |Authenticates user and returns session data.   |
+|/api/search-recipes     | POST     |Fetches recipes & nutrition data from Edamam.  |
+|/api/generate-meal-plan | POST     |Connects to Gemini Pro for AI meal generation. |
+|/api/favorites          | POST     |Saves a recipe to the Supabase database.       |
 
 
 
@@ -70,37 +46,7 @@ Endpoint Method Description
 
 ​The application is architected for high availability using a multi-cloud deployment strategy.
 
-graph LR
-    subgraph "Public Internet"
-        Domain[dishcovery-ai.com]
-    end
-
-    subgraph "Vercel Platform"
-        FE[Production Frontend <br/><i>React</i>]
-    end
-
-    subgraph "Render Platform"
-        BE[Production Backend <br/><i>Python/Flask</i>]
-    end
-
-    subgraph "Supabase Cloud"
-        DB[(PostgreSQL Database)]
-    end
-
-    %% Flow
-    Domain -->|HTTPS| FE
-    FE -->|API Calls| BE
-    BE -->|Database Connection| DB
-
-    %% Styling
-    style Domain fill:#f9f9f9,stroke:#333
-    style FE fill:#000,stroke:#fff,color:#fff
-    style BE fill:#46a394,stroke:#333,color:#fff
-    style DB fill:#3ecf8e,stroke:#333,color:#fff
-
-
-
-
+<img width="2000" height="245" alt="Image" src="https://github.com/user-attachments/assets/9c52ca3d-dbc6-4d7a-816f-e19ac551026e" />
 
  
 ---
