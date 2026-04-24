@@ -10,27 +10,30 @@ A collaborative project for Elective 1 & 2 - Bulacan State University
 ​This diagram shows how the user's browser interacts with our cloud infrastructure and external intelligence services.
 
 ​```mermaid
-
-
 graph TD
+    %% Nodes
     User((User Browser))
-    FE[Frontend UI]
-    BE[Backend]
-    DB[(Supabase DB)]
-    Gemini{Gemini AI}
-    Edamam[Edamam API]
+    FE[Frontend UI <br/><i>React/Vercel</i>]
+    BE[Backend <br/><i>Flask/Render</i>]
+    DB[(Supabase Database <br/><i>PostgreSQL</i>)]
+    Gemini{Google Gemini AI <br/><i>GenAI SDK</i>}
+    Edamam[Edamam Nutrition API]
     Spoon[Spoonacular API]
 
-    User --> FE
-    User --> BE
-    FE --> BE
-    BE --> DB
-    BE --> Gemini
-    BE --> Edamam
-    BE --> Spoon
+    %% Connections
+    User -->|React/Vercel| FE
+    User -->|REST API| BE
+    FE -->|API Requests| BE
+    BE -->|SQL Queries| DB
+    BE -->|GenAI SDK| Gemini
+    BE -->|HTTP Request| Edamam
+    BE -->|HTTP Request| Spoon
 
-
-
+    %% Styling
+    style FE fill:#239120,stroke:#333,stroke-width:2px,color:#fff
+    style BE fill:#005c99,stroke:#333,stroke-width:2px,color:#fff
+    style DB fill:#3ecf8e,stroke:#333,stroke-width:2px,color:#fff
+    style Gemini fill:#f4b400,stroke:#333,stroke-width:2px
 
 ```
 
