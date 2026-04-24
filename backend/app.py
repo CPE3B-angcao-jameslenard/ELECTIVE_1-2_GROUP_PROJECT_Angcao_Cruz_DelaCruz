@@ -210,7 +210,7 @@ def generate_meal_plan():
     """
     
     try:
-        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+        response = client.models.generate_content(model="gemini-1.0-pro", contents=prompt)
         return jsonify({"status": "success", "plan": response.text})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
