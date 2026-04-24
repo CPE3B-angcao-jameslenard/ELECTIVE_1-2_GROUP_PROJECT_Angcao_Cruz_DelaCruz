@@ -10,6 +10,7 @@ A collaborative project for Elective 1 & 2 - Bulacan State University
 ​This diagram shows how the user's browser interacts with our cloud infrastructure and external intelligence services.
 
 ​```mermaid
+
 graph TD
     %% Nodes
     User((User Browser))
@@ -34,6 +35,7 @@ graph TD
     style BE fill:#005c99,stroke:#333,stroke-width:2px,color:#fff
     style DB fill:#3ecf8e,stroke:#333,stroke-width:2px,color:#fff
     style Gemini fill:#f4b400,stroke:#333,stroke-width:2px
+
 
 ```
 
