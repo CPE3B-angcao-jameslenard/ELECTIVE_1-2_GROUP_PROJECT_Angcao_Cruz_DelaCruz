@@ -198,7 +198,19 @@ def generate_meal_plan():
         ingredients = data.get('ingredients', '')
         food_type = data.get('foodType', 'dish')
         
-        prompt = f"Act as a professional Chef. Based on these ingredients: {ingredients}, create a 3-Day {food_type.title()} Plan."
+        prompt = f"""
+        Act as a professional Chef. Based on these ingredients: {ingredients}, 
+        create a '3-Day {food_type.title()} Plan'. 
+        Suggest one {food_type} per day.
+
+        STRICT FORMATTING RULES:
+        1. NEVER use asterisks (*), hashtags (#), underscores (_), or dashes (-).
+        2. For Titles, just use UPPERCASE TEXT (Example: DAY 1: CHOCO HEAVEN).
+        3. For bullet points, use a Food Emoji instead of a dot or asterisk.
+        4. Use double line breaks between EVERY paragraph so it looks like a clean blog post.
+        5. Use lots of food emojis to make it look appetizing.
+        6. Speak directly to the user in a friendly, chef-like tone.
+        """
 
         # Grab the API key manually just to be safe
         import os
