@@ -34,8 +34,8 @@ function App() {
   return savedUser ? JSON.parse(savedUser) : null;
 });
 
-  // --- PERSISTENCE LOGIC START ---
-  // 1. Load data from LocalStorage when the app first opens
+  //PERSISTENCE LOGIC START
+  //Load data from LocalStorage when the app first opens
   useEffect(() => {
     const savedSearch = localStorage.getItem('lastSearch');
     const savedAI = localStorage.getItem('lastAI');
@@ -44,11 +44,11 @@ function App() {
       const parsed = JSON.parse(savedSearch);
       if (parsed.length > 0) setRecipes(parsed);
     }
-    // Updated to match your variable name: aiDessertPlan
+    // Updated to match this variable name: aiDessertPlan
     if (savedAI) setAiDessertPlan(savedAI);
   }, []);
 
-  // 2. Save data to LocalStorage whenever recipes or aiDessertPlan change
+  //Save data to LocalStorage whenever recipes or aiDessertPlan change
   useEffect(() => {
     if (recipes.length > 0) {
       localStorage.setItem('lastSearch', JSON.stringify(recipes));
@@ -57,7 +57,7 @@ function App() {
       localStorage.setItem('lastAI', aiDessertPlan);
     }
   }, [recipes, aiDessertPlan]);
-  // --- PERSISTENCE LOGIC END ---
+  //PERSISTENCE LOGIC END
 
   const goHome = () => {
     setActivePage("home");
@@ -165,7 +165,7 @@ function App() {
         title: 'Authentication Required',
         text: 'Please login first to save favorites! ✨',
         icon: 'warning',
-        confirmButtonColor: '#4A5D23' // Matching your green theme!
+        confirmButtonColor: '#4A5D23' 
       });
       setShowLogin(true);
       return;
@@ -221,9 +221,35 @@ const handleRemoveFavorite = async (favId) => {
     }
   };
 
+const handleClearCookbook = async () => {
+  const result = await Swal.fire({
+    title: 'Empty your Cookbook?',
+    text: "This will delete ALL saved recipes forever!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d9534f',
+    confirmButtonText: 'Yes, clear it all!'
+  });
+
+  if (result.isConfirmed) {
+    try {
+      const response = await fetch(`https://elective-1-2-group-project-angcao-cruz.onrender.com/api/favorites/clear/${currentUser.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setFavoriteList([]); // Clears the screen instantly
+        Swal.fire('Cleared!', 'Your cookbook is empty.', 'success');
+      }
+    } catch (err) {
+      console.error("Clear error:", err);
+    }
+  }
+};
+
 const viewFavorites = async () => {
     if (!currentUser) return;
-    setIsFavoritesLoading(true); // START the favorites loader
+    setIsFavoritesLoading(true); //START the favorites loader
 
     try {
       const response = await fetch(`https://elective-1-2-group-project-angcao-cruz.onrender.com/api/favorites/${currentUser.id}`);
@@ -310,7 +336,7 @@ const viewFavorites = async () => {
     </section>
   );
 
-  //Pagination MAath
+  //Pagination Math
   const indexOfLastRecipe = currentPage * recipesPerPage;
   const indexOfFirstRecipe = indexOfLastRecipe - recipesPerPage;
   const currentRecipes = recipes.slice(indexOfFirstRecipe, indexOfLastRecipe);
@@ -347,7 +373,7 @@ const viewFavorites = async () => {
                 <button className="header-link-btn" onClick={() => { 
                   setCurrentUser(null); 
                   setShowFavoritesView(false); 
-                  // This deletes the "Save File" so the next user isn't logged in as you
+                  //Deletes the "Save File" so the next user isn't logged in as you
                   localStorage.removeItem('user'); 
                 }}>Logout</button>
               </>
@@ -372,6 +398,25 @@ const viewFavorites = async () => {
               <p className="eyebrow">Saved Collection</p>
               <h2 className="section-title">My Cookbook</h2>
             </div>
+
+            {favoriteList.length > 0 && (
+              <button 
+                onClick={handleClearCookbook}
+                style={{ 
+                  marginBottom: '20px', 
+                  backgroundColor: '#f8d7da', 
+                  color: '#721c24', 
+                  border: '1px solid #f5c6cb', 
+                  padding: '10px 15px', 
+                  borderRadius: '8px', 
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  width: '100%' 
+                }}
+              >
+                🧹 Clear Entire Cookbook
+              </button>
+            )}
 
             {favoriteList.length === 0 ? (
               <p className="empty-state">You haven't saved any recipes yet. Go back home to search.</p>

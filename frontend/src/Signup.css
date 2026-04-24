@@ -13,7 +13,7 @@
   backdrop-filter: blur(4px);
 }
 
-/* The actual popup box */
+/*The actual popup box*/
 .auth-modal {
   background: linear-gradient(180deg, #fffaf2 0%, #f7f0e4 100%);
   padding: 2rem;
