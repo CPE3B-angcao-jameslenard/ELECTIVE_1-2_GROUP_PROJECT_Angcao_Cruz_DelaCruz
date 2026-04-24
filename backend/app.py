@@ -149,6 +149,15 @@ def get_favorites(user_id):
         
     return jsonify({"status": "success", "favorites": favorites_list}), 200
 
+@app.route('/api/favorites/<int:fav_id>', methods=['DELETE'])
+def delete_favorite(fav_id):
+    fav = Favorite.query.get(fav_id)
+    if fav:
+        db.session.delete(fav)
+        db.session.commit()
+        return jsonify({"message": "Recipe removed! 🗑️"}), 200
+    return jsonify({"error": "Recipe not found"}), 404
+
 #ROUTE 1: THE FINDER (Forgiving Search)
 @app.route('/api/search-recipes', methods=['POST'])
 def search_recipes():

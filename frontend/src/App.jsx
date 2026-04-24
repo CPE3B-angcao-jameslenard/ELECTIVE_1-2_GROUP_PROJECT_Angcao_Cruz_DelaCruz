@@ -201,6 +201,26 @@ function App() {
     }
   };
 
+const handleRemoveFavorite = async (favId) => {
+    try {
+      const response = await fetch(`https://elective-1-2-group-project-angcao-cruz.onrender.com/api/favorites/${favId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setFavoriteList(favoriteList.filter(recipe => recipe.id !== favId));
+        Swal.fire({
+          title: 'Removed!',
+          text: 'Recipe has been deleted from your cookbook.',
+          icon: 'success',
+          confirmButtonColor: '#4A5D23'
+        });
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
+    }
+  };
+
 const viewFavorites = async () => {
     if (!currentUser) return;
     setIsFavoritesLoading(true); // START the favorites loader
@@ -378,6 +398,24 @@ const viewFavorites = async () => {
                           {recipe.fat > 0 && <span className="nutrition-tag">{recipe.fat}g Fat</span>}
                           {recipe.carbs > 0 && <span className="nutrition-tag">{recipe.carbs}g Carbs</span>}
                         </div>
+
+                        <button 
+                          onClick={() => handleRemoveFavorite(recipe.id)} 
+                          style={{ 
+                            marginTop: '15px', 
+                            color: '#d9534f', 
+                            background: 'none', 
+                            border: '1px solid #d9534f', 
+                            borderRadius: '5px',
+                            padding: '5px 10px',
+                            cursor: 'pointer',
+                            fontWeight: 'bold',
+                            display: 'block',
+                            width: '100%'
+                          }}
+                        >
+                          🗑️ Remove from Cookbook
+                        </button>
                         
                         <a href={recipe.sourceUrl} target="_blank" rel="noreferrer" className="view-link" style={{ fontWeight: 'bold', display: 'block' }}>
                           Full Recipe
