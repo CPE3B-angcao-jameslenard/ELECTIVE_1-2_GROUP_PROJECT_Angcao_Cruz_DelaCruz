@@ -209,7 +209,7 @@ def generate_meal_plan():
     4. Use emojis.
     """
     
-        try:
+    try:
         response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
         return jsonify({"status": "success", "plan": response.text})
     except Exception as e:
