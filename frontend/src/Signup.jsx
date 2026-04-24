@@ -8,7 +8,7 @@ const Signup = ({ onClose, onSwitchToLogin }) => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      // FIX: Changed from localhost to your Render URL
+      //Changed from localhost to our Render URL
       const response = await fetch('https://elective-1-2-group-project-angcao-cruz.onrender.com/api/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -18,7 +18,7 @@ const Signup = ({ onClose, onSwitchToLogin }) => {
       const data = await response.json();
 
       if (response.ok) {
-        // SUCCESS POP-UP
+        //SUCCESS POP-UP
         Swal.fire({
           title: 'Welcome to the Team!',
           text: 'Account created successfully. You can now log in! 👨‍🍳',
@@ -27,7 +27,7 @@ const Signup = ({ onClose, onSwitchToLogin }) => {
         });
         onClose(); 
       } else {
-        // ERROR POP-UP (e.g., Username already taken)
+        //ERROR POP-UP (e.g., Username already taken)
         Swal.fire({
           title: 'Oops!',
           text: data.error || 'Something went wrong during signup.',

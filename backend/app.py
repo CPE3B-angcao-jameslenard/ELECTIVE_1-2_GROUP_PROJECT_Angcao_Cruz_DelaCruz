@@ -182,6 +182,13 @@ def search_recipes():
             
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    
+@app.route('/api/favorites/clear/<int:user_id>', methods=['DELETE'])
+def clear_cookbook(user_id):
+    #Wipes every favorite for that specific user
+    Favorite.query.filter_by(user_id=user_id).delete()
+    db.session.commit()
+    return jsonify({"message": "Cookbook cleared! 🧹"}), 200
 
 #ROUTE 2: THE ADVANCED AI FEATURE
 @app.route('/api/generate-meal-plan', methods=['POST'])
