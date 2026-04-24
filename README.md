@@ -5,6 +5,7 @@ A collaborative project for Elective 1 & 2 - Bulacan State University
 
 
 4. Documentation
+
 ​4.1 System Architecture Diagram
 ​This diagram shows how the user's browser interacts with our cloud infrastructure and external intelligence services.
 
@@ -19,6 +20,7 @@ graph TD
 
 
 4.2 API Documentation
+
 ​Our backend serves as a centralized hub for data orchestration and security.
 
 Endpoint Method Description
@@ -31,6 +33,7 @@ Endpoint Method Description
 
 
 4.3 Database Schema
+
 ​We utilize a PostgreSQL schema hosted on Supabase to manage user persistence.
 ​Table: users
 ​id (Primary Key, UUID)
@@ -46,6 +49,7 @@ Endpoint Method Description
 
 
 4.4 Deployment Diagram
+
 ​The application is architected for high availability using a multi-cloud deployment strategy.
 
 graph LR
