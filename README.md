@@ -10,36 +10,7 @@ A collaborative project for Elective 1 & 2 - Bulacan State University
 ​This diagram shows how the user's browser interacts with our cloud infrastructure and external intelligence services.
 
 
-​
-​```text
-
-   [  USER BROWSER  ]
-          |
-          | (1) User Interaction (HTTPS)
-          v
-+------------------------+
-|  FRONTEND (React app)  |  <--- Hosted on Vercel
-+------------------------+
-          |
-          | (2) API Request (JSON)
-          v
-+------------------------+
-|  BACKEND (Flask API)   |  <--- Hosted on Render
-+------------------------+
-          |
-     ________________/|  (3) Data Processing & Routing
-    /         |       |         |
-    v         v       v         v
-+-------+ +-------+ +-------+ +-------+
-|  DB   | |GEMINI | |EDAMAM | |SPOON |
-|(Postg)| | (AI)  | | (Nutri| |(Recip|
-|-------| |-------| |-------| |-------|
-|Supabas| |Google | | API   | | ACULAR|
-+-------+ +-------+ +-------+ +-------+
-
------------------------------------------------------------
-
-```
+​<img width="1284" height="928" alt="Image" src="https://github.com/user-attachments/assets/a34410a4-613a-4f81-bf0b-8b4a80808d37" />
 
 
 4.2 API Documentation
@@ -75,28 +46,9 @@ Endpoint Method Description
 
 ​The application is architected for high availability using a multi-cloud deployment strategy.
 
+<img width="2000" height="245" alt="Image" src="https://github.com/user-attachments/assets/9c52ca3d-dbc6-4d7a-816f-e19ac551026e" />
 
-​
 
-```text
-[ PUBLIC INTERNET ]          [ VERCEL PLATFORM ]          [ RENDER PLATFORM ]          [ SUPABASE CLOUD ]
-       |                            |                            |                            |
-       |      HTTPS Request         |                            |                            |
-  [ DOMAIN ] --------------------> [ FRONTEND ]                  |                            |
-                                   [  React   ]                  |                            |
-                                        |                        |                            |
-                                        |       API Calls        |                            |
-                                        '----------------------> [ BACKEND ]                  |
-                                                                 [  Flask  ]                  |
-                                                                     |                        |
-                                                                     |     DB Connection      |
-                                                                     '----------------------> [ DATABASE ]
-                                                                                              [ Postgres ]
-
------------------------------------------------------------------------------------------------------------
-```
-
- 
 ---
 
 ##Developed By:
