@@ -9,7 +9,9 @@ A collaborative project for Elective 1 & 2 - Bulacan State University
 ​4.1 System Architecture Diagram
 ​This diagram shows how the user's browser interacts with our cloud infrastructure and external intelligence services.
 
+
 ​
+​```mermaid
 
    [  USER BROWSER  ]
           |
@@ -37,7 +39,7 @@ A collaborative project for Elective 1 & 2 - Bulacan State University
 
 -----------------------------------------------------------
 
-
+```
 
 
 4.2 API Documentation
