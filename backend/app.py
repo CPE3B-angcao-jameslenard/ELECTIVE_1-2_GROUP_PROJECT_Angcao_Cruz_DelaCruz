@@ -191,29 +191,36 @@ def clear_cookbook(user_id):
     return jsonify({"message": "Cookbook cleared! 🧹"}), 200
 
 #ROUTE 2: THE ADVANCED AI FEATURE
-@app.route('/api/ai-chef', methods=['POST','OPTIONS'])
+@app.route('/api/ai-chef', methods=['POST', 'OPTIONS'])
 def generate_meal_plan():
-    data = request.json
-    ingredients = data.get('ingredients', '')
-    food_type = data.get('foodType', 'dish') 
-    
-    prompt = f"""
-    Act as a professional Chef. Based on these ingredients: {ingredients}, 
-    create a '3-Day {food_type.title()} Plan'. 
-    Suggest one {food_type} per day. 
-    
-    FORMATTING RULES:
-    1. NEVER use markdown symbols (*, #, _, etc).
-    2. You MUST use double line breaks (press enter twice) between each day.
-    3. Make it readable like a blog post.
-    4. Use emojis.
-    """
-    
     try:
-        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
-        return jsonify({"status": "success", "plan": response.text})
+        data = request.json
+        ingredients = data.get('ingredients', '')
+        food_type = data.get('foodType', 'dish')
+        
+        prompt = f"Act as a professional Chef. Based on these ingredients: {ingredients}, create a 3-Day {food_type.title()} Plan."
+
+        # Grab the API key manually just to be safe
+        import os
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            return jsonify({"status": "success", "plan": "⚠️ SERVER ERROR: API Key is missing inside Render Environment."})
+
+        # Generate the AI response
+        response = client.models.generate_content(
+            model="gemini-1.5-flash",
+            contents=prompt
+        )
+        
+        # Check if Google blocked it for safety reasons
+        ai_text = response.text if response.text else "⚠️ AI ERROR: Google blocked the response (Safety Filters)."
+        
+        return jsonify({"status": "success", "plan": ai_text})
+
     except Exception as e:
-        return jsonify({"status": "success", "plan": f"⚠️ SYSTEM ERROR: {str(e)}"})
+        # If ANYTHING fails, it sends this cleanly to the frontend instead of crashing CORS
+        print(f"CRASH DETAILS: {str(e)}") 
+        return jsonify({"status": "success", "plan": f"⚠️ PYTHON ERROR: {str(e)}"})
 
 if __name__ == '__main__':
     app.run(port=5005, debug=True)
