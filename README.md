@@ -11,7 +11,7 @@ A collaborative project for Elective 1 & 2 - Bulacan State University
 
 
 ​
-​```mermaid
+​```text
 
    [  USER BROWSER  ]
           |
