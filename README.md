@@ -78,7 +78,7 @@ Endpoint Method Description
 
 ​
 
-
+```text
 [ PUBLIC INTERNET ]          [ VERCEL PLATFORM ]          [ RENDER PLATFORM ]          [ SUPABASE CLOUD ]
        |                            |                            |                            |
        |      HTTPS Request         |                            |                            |
@@ -94,7 +94,7 @@ Endpoint Method Description
                                                                                               [ Postgres ]
 
 -----------------------------------------------------------------------------------------------------------
-
+```
 
  
 ---
