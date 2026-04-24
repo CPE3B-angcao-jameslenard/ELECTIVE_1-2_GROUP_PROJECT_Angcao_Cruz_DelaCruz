@@ -9,31 +9,33 @@ A collaborative project for Elective 1 & 2 - Bulacan State University
 ​4.1 System Architecture Diagram
 ​This diagram shows how the user's browser interacts with our cloud infrastructure and external intelligence services.
 
-​```mermaid
-graph TD
-    %% Nodes
-    User((User Browser))
-    FE[Project Frontend <br/><i>React/Vercel</i>]
-    BE[Project Backend <br/><i>Flask/Render</i>]
-    DB[(Supabase Database <br/><i>PostgreSQL</i>)]
-    Gemini{Google Gemini AI <br/><i>GenAI SDK</i>}
-    Edamam[Edamam Nutrition API]
-    Spoon[Spoonacular API]
+​
 
-    %% Connections
-    User -->|Access| FE
-    FE -->|API Requests| BE
-    BE -->|SQL Queries| DB
-    BE -->|AI Processing| Gemini
-    BE -->|Nutrition Info| Edamam
-    BE -->|Recipe Data| Spoon
+   [  USER BROWSER  ]
+          |
+          | (1) User Interaction (HTTPS)
+          v
++------------------------+
+|  FRONTEND (React app)  |  <--- Hosted on Vercel
++------------------------+
+          |
+          | (2) API Request (JSON)
+          v
++------------------------+
+|  BACKEND (Flask API)   |  <--- Hosted on Render
++------------------------+
+          |
+     ________________/|  (3) Data Processing & Routing
+    /         |       |         |
+    v         v       v         v
++-------+ +-------+ +-------+ +-------+
+|  DB   | |GEMINI | |EDAMAM | |SPOON |
+|(Postg)| | (AI)  | | (Nutri| |(Recip|
+|-------| |-------| |-------| |-------|
+|Supabas| |Google | | API   | | ACULAR|
++-------+ +-------+ +-------+ +-------+
 
-    %% Styling
-    style FE fill:#239120,stroke:#333,stroke-width:2px,color:#fff
-    style BE fill:#005c99,stroke:#333,stroke-width:2px,color:#fff
-    style DB fill:#3ecf8e,stroke:#333,stroke-width:2px,color:#fff
-    style Gemini fill:#f4b400,stroke:#333,stroke-width:2px
-```
+-----------------------------------------------------------
 
 
 
@@ -72,36 +74,24 @@ Endpoint Method Description
 ​The application is architected for high availability using a multi-cloud deployment strategy.
 
 
-​```mermaid
-graph LR
-    subgraph "Public Internet"
-        Domain[dishcovery-ai]
-    end
+​
 
-    subgraph "Vercel Platform"
-        FE[Production Frontend <br/><i>React</i>]
-    end
 
-    subgraph "Render Platform"
-        BE[Production Backend <br/><i>Python/Flask</i>]
-    end
+[ PUBLIC INTERNET ]          [ VERCEL PLATFORM ]          [ RENDER PLATFORM ]          [ SUPABASE CLOUD ]
+       |                            |                            |                            |
+       |      HTTPS Request         |                            |                            |
+  [ DOMAIN ] --------------------> [ FRONTEND ]                  |                            |
+                                   [  React   ]                  |                            |
+                                        |                        |                            |
+                                        |       API Calls        |                            |
+                                        '----------------------> [ BACKEND ]                  |
+                                                                 [  Flask  ]                  |
+                                                                     |                        |
+                                                                     |     DB Connection      |
+                                                                     '----------------------> [ DATABASE ]
+                                                                                              [ Postgres ]
 
-    subgraph "Supabase Cloud"
-        DB[(PostgreSQL Database)]
-    end
-
-    %% Flow
-    Domain -->|HTTPS| FE
-    FE -->|API Calls| BE
-    BE -->|Database Connection| DB
-
-    %% Styling
-    style Domain fill:#f9f9f9,stroke:#333
-    style FE fill:#000,stroke:#fff,color:#fff
-    style BE fill:#46a394,stroke:#333,color:#fff
-    style DB fill:#3ecf8e,stroke:#333,color:#fff
-
-```
+-----------------------------------------------------------------------------------------------------------
 
 
  
