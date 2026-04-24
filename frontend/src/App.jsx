@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Signup from './Signup';
 import Login from './Login';
@@ -7,8 +7,6 @@ import dev1 from './assets/dev1.png';
 import dev2 from './assets/dev2.jpg';
 import dev3 from './assets/dev3.jpg';
 import Swal from 'sweetalert2';
-
-
 
 function App() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,6 +33,31 @@ function App() {
   const savedUser = localStorage.getItem('user');
   return savedUser ? JSON.parse(savedUser) : null;
 });
+
+  // --- PERSISTENCE LOGIC START ---
+  // 1. Load data from LocalStorage when the app first opens
+  useEffect(() => {
+    const savedSearch = localStorage.getItem('lastSearch');
+    const savedAI = localStorage.getItem('lastAI');
+    
+    if (savedSearch) {
+      const parsed = JSON.parse(savedSearch);
+      if (parsed.length > 0) setRecipes(parsed);
+    }
+    // Updated to match your variable name: aiDessertPlan
+    if (savedAI) setAiDessertPlan(savedAI);
+  }, []);
+
+  // 2. Save data to LocalStorage whenever recipes or aiDessertPlan change
+  useEffect(() => {
+    if (recipes.length > 0) {
+      localStorage.setItem('lastSearch', JSON.stringify(recipes));
+    }
+    if (aiDessertPlan) {
+      localStorage.setItem('lastAI', aiDessertPlan);
+    }
+  }, [recipes, aiDessertPlan]);
+  // --- PERSISTENCE LOGIC END ---
 
   const goHome = () => {
     setActivePage("home");
@@ -153,11 +176,16 @@ function App() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: currentUser.id,
+          user_id: currentUser.id, 
           recipe_id: recipe.id,
           title: recipe.title,
           image: recipe.image,
-          source_url: recipe.sourceUrl
+          sourceUrl: recipe.sourceUrl,
+          readyInMinutes: recipe.readyInMinutes,
+          calories: recipe.calories,
+          protein: recipe.protein,
+          fat: recipe.fat,
+          carbs: recipe.carbs
         })
       });
 
@@ -170,6 +198,26 @@ function App() {
       });
     } catch (err) {
       console.error("Error saving favorite:", err);
+    }
+  };
+
+const handleRemoveFavorite = async (favId) => {
+    try {
+      const response = await fetch(`https://elective-1-2-group-project-angcao-cruz.onrender.com/api/favorites/${favId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setFavoriteList(favoriteList.filter(recipe => recipe.id !== favId));
+        Swal.fire({
+          title: 'Removed!',
+          text: 'Recipe has been deleted from your cookbook.',
+          icon: 'success',
+          confirmButtonColor: '#4A5D23'
+        });
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
     }
   };
 
@@ -332,26 +380,53 @@ const viewFavorites = async () => {
                 {favoriteList.map((recipe) => (
                   <article key={recipe.id} className="recipe-card">
                     <div className="recipe-image-wrap">
-                      <img src={recipe.image} alt={recipe.title} />
+                      <img 
+                        src={recipe.image} 
+                        alt={recipe.title} 
+                        onError={(e) => { 
+                          e.target.onerror = null; 
+                          e.target.src = 'https://placehold.co/600x400?text=View+Recipe+for+Details'; 
+                        }} 
+                      />
                     </div>
                       <div className="recipe-body">
                         <p className="recipe-meta">
-                          ⏱️ {recipe.readyInMinutes} mins | 🔥 {recipe.calories} kcal
+                          {/* Only show time if it exists, otherwise default to 30 */}
+                          ⏱️ {recipe.readyInMinutes || "30"} mins 
+                          {/* ONLY show the calorie icon if there is a number */}
+                          {recipe.calories > 0 && ` | 🔥 ${recipe.calories} kcal`}
                         </p>
-                        
+
                         <h3>{recipe.title}</h3>
 
                         <div className="nutrition-row" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+                          {/* Only show these if the data is NOT null */}
                           {recipe.protein > 0 && <span className="nutrition-tag">{recipe.protein}g Protein</span>}
                           {recipe.fat > 0 && <span className="nutrition-tag">{recipe.fat}g Fat</span>}
                           {recipe.carbs > 0 && <span className="nutrition-tag">{recipe.carbs}g Carbs</span>}
                         </div>
+
+                        <button 
+                          onClick={() => handleRemoveFavorite(recipe.id)} 
+                          style={{ 
+                            marginTop: '15px', 
+                            color: '#d9534f', 
+                            background: 'none', 
+                            border: '1px solid #d9534f', 
+                            borderRadius: '5px',
+                            padding: '5px 10px',
+                            cursor: 'pointer',
+                            fontWeight: 'bold',
+                            display: 'block',
+                            width: '100%'
+                          }}
+                        >
+                          🗑️ Remove from Cookbook
+                        </button>
                         
-                        <div style={{ marginTop: 'auto' }}>
-                          <a href={recipe.sourceUrl} target="_blank" rel="noreferrer" className="view-link" style={{ fontWeight: 'bold', display: 'block' }}>
-                            Full Recipe
-                          </a>
-                        </div>
+                        <a href={recipe.sourceUrl} target="_blank" rel="noreferrer" className="view-link" style={{ fontWeight: 'bold', display: 'block' }}>
+                          Full Recipe
+                        </a>
                       </div>
                   </article>
                 ))}
@@ -443,7 +518,11 @@ const viewFavorites = async () => {
                         ❤️
                       </button>
                       <div className="recipe-image-wrap">
-                        <img src={recipe.image} alt={recipe.title} />
+                        <img 
+                          src={recipe.image} 
+                          alt={recipe.title} 
+                          onError={(e) => { e.target.src = 'https://placehold.co/600x400?text=Recipe+Image'; }}
+                        />
                       </div>
                       <div className="recipe-body">
                         <p className="recipe-meta">
