@@ -77,6 +77,18 @@ graph LR
 
 
  
+---
 
+##Developed By:
+**Dishcovery AI** was built for Elective 1 & 2 by:
+
+* **Ashley Mae D. Cruz** | *Frontend Designer*
+  * Focused on creating clean, responsive, and user-friendly interfaces for every device.
+* **James Lenard M. Angcao** | *Backend Developer*
+  * Responsible for API logic, data handling, and smooth integration with the recipe services.
+* **Josephine B. Dela Cruz** | *Full-stack Contributor*
+  * Helped shape the app structure, menu flow, and overall recipe experience.
+
+---
 
 
