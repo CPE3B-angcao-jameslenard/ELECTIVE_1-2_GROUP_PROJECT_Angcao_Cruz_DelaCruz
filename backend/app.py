@@ -109,13 +109,17 @@ def add_favorite():
     if existing:
         return jsonify({"message": "Already in favorites!"}), 200
 
-    # 🐛 BUG FIX:Now uses exact column names: recipe_title and image_url
     new_fav = Favorite(
-        user_id=data.get('user_id'), 
-        recipe_id=str(data.get('recipe_id')), 
-        recipe_title=data.get('title'), 
+        user_id=user_id,
+        recipe_id=str(recipe_id),
+        recipe_title=data.get('title'),
         image_url=data.get('image'),
-        source_url=source_url #Saves the link here
+        source_url=data.get('sourceUrl'),
+        ready_in_minutes=data.get('readyInMinutes'),
+        calories=data.get('calories'),
+        protein=data.get('protein'),
+        fat=data.get('fat'),
+        carbs=data.get('carbs')
     )
     db.session.add(new_fav)
     db.session.commit()
@@ -133,9 +137,14 @@ def get_favorites(user_id):
         favorites_list.append({
             "id": fav.id,
             "recipe_id": fav.recipe_id,
-            "title": fav.recipe_title, 
+            "title": fav.recipe_title,
             "image": fav.image_url,
-            "sourceUrl": fav.source_url #sends it back to REACT
+            "sourceUrl": fav.source_url,
+            "readyInMinutes": fav.ready_in_minutes,
+            "calories": fav.calories,
+            "protein": fav.protein,
+            "fat": fav.fat,
+            "carbs": fav.carbs
         })
         
     return jsonify({"status": "success", "favorites": favorites_list}), 200
