@@ -3,7 +3,6 @@
 
 A collaborative project for Elective 1 & 2 - Bulacan State University
 
-
 4. Documentation
 
 ​4.1 System Architecture Diagram
