@@ -191,7 +191,7 @@ def clear_cookbook(user_id):
     return jsonify({"message": "Cookbook cleared! 🧹"}), 200
 
 #ROUTE 2: THE ADVANCED AI FEATURE
-@app.route('/api/ai-chef', methods=['POST'])
+@app.route('/api/ai-chef', methods=['POST','OPTIONS'])
 def generate_meal_plan():
     data = request.json
     ingredients = data.get('ingredients', '')
