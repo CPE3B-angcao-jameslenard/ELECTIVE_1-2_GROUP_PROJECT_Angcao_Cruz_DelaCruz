@@ -9,6 +9,8 @@ A collaborative project for Elective 1 & 2 - Bulacan State University
 ​4.1 System Architecture Diagram
 ​This diagram shows how the user's browser interacts with our cloud infrastructure and external intelligence services.
 
+​```mermaid
+
 graph TD
     %% Nodes
     User((User Browser))
@@ -33,6 +35,9 @@ graph TD
     style BE fill:#005c99,stroke:#333,stroke-width:2px,color:#fff
     style DB fill:#3ecf8e,stroke:#333,stroke-width:2px,color:#fff
     style Gemini fill:#f4b400,stroke:#333,stroke-width:2px
+
+
+```
 
 
 
@@ -70,6 +75,9 @@ Endpoint Method Description
 
 ​The application is architected for high availability using a multi-cloud deployment strategy.
 
+
+​```mermaid
+
 graph LR
     subgraph "Public Internet"
         Domain[dishcovery-ai.com]
@@ -97,6 +105,9 @@ graph LR
     style FE fill:#000,stroke:#fff,color:#fff
     style BE fill:#46a394,stroke:#333,color:#fff
     style DB fill:#3ecf8e,stroke:#333,color:#fff
+
+
+```
 
 
 
