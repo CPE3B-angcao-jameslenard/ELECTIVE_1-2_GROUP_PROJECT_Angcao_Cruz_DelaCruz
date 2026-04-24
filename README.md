@@ -14,28 +14,26 @@ A collaborative project for Elective 1 & 2 - Bulacan State University
 graph TD
     %% Nodes
     User((User Browser))
-    FE[Frontend UI <br/><i>React/Vercel</i>]
-    BE[Backend <br/><i>Flask/Render</i>]
+    FE[Project Frontend <br/><i>React/Vercel</i>]
+    BE[Project Backend <br/><i>Flask/Render</i>]
     DB[(Supabase Database <br/><i>PostgreSQL</i>)]
     Gemini{Google Gemini AI <br/><i>GenAI SDK</i>}
     Edamam[Edamam Nutrition API]
     Spoon[Spoonacular API]
 
     %% Connections
-    User -->|React/Vercel| FE
-    User -->|REST API| BE
+    User -->|Access| FE
     FE -->|API Requests| BE
     BE -->|SQL Queries| DB
-    BE -->|GenAI SDK| Gemini
-    BE -->|HTTP Request| Edamam
-    BE -->|HTTP Request| Spoon
+    BE -->|AI Processing| Gemini
+    BE -->|Nutrition Info| Edamam
+    BE -->|Recipe Data| Spoon
 
     %% Styling
     style FE fill:#239120,stroke:#333,stroke-width:2px,color:#fff
     style BE fill:#005c99,stroke:#333,stroke-width:2px,color:#fff
     style DB fill:#3ecf8e,stroke:#333,stroke-width:2px,color:#fff
     style Gemini fill:#f4b400,stroke:#333,stroke-width:2px
-
 
 ```
 
@@ -77,6 +75,7 @@ Endpoint Method Description
 
 
 ​```mermaid
+
 graph LR
     subgraph "Public Internet"
         Domain[dishcovery-ai.com]
