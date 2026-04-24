@@ -3,9 +3,9 @@
 
 A collaborative project for Elective 1 & 2 - Bulacan State University
 
-4. Documentation
+**4. Documentation**
 
-​4.1 System Architecture Diagram
+​**4.1 System Architecture Diagram**
 
 ​This diagram shows how the user's browser interacts with our cloud infrastructure and external intelligence services.
 
@@ -13,7 +13,7 @@ A collaborative project for Elective 1 & 2 - Bulacan State University
 
 
 
-4.2 API Documentation
+**4.2 API Documentation**
 
 ​Our backend serves as a centralized hub for data orchestration and security.
 
@@ -27,7 +27,7 @@ A collaborative project for Elective 1 & 2 - Bulacan State University
 
 
 
-4.3 Database Schema
+**4.3 Database Schema**
 
 ​We utilize a PostgreSQL schema hosted on Supabase to manage user persistence.
 
@@ -46,7 +46,7 @@ A collaborative project for Elective 1 & 2 - Bulacan State University
 
 
 
-4.4 Deployment Diagram
+**4.4 Deployment Diagram**
 
 ​The application is architected for high availability using a multi-cloud deployment strategy.
 
