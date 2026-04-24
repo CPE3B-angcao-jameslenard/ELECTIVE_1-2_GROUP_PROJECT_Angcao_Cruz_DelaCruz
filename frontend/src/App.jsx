@@ -380,7 +380,14 @@ const viewFavorites = async () => {
                 {favoriteList.map((recipe) => (
                   <article key={recipe.id} className="recipe-card">
                     <div className="recipe-image-wrap">
-                      <img src={recipe.image} alt={recipe.title} />
+                      <img 
+                        src={recipe.image} 
+                        alt={recipe.title} 
+                        onError={(e) => { 
+                          e.target.onerror = null; 
+                          e.target.src = 'https://placehold.co/600x400?text=View+Recipe+for+Details'; 
+                        }} 
+                      />
                     </div>
                       <div className="recipe-body">
                         <p className="recipe-meta">
