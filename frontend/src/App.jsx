@@ -144,7 +144,7 @@ function App() {
     setErrorMessage("");
 
     try {
-      const response = await fetch('https://elective-1-2-group-project-angcao-cruz.onrender.com/api/generate-meal-plan', {
+      const response = await fetch('https://elective-1-2-group-project-angcao-cruz.onrender.com/api/ai-chef', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ingredients, foodType })
