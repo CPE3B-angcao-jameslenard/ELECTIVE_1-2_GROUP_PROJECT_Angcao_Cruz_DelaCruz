@@ -59,6 +59,25 @@ function App() {
   }, [recipes, aiDessertPlan]);
   //PERSISTENCE LOGIC END
 
+  const handleLogout = () => {
+    // 1. Clear the Auth
+    setCurrentUser(null);
+    setShowFavoritesView(false);
+    localStorage.removeItem('user');
+
+    // 2. Wipe the UI Data (The Reset)
+    setRecipes([]);
+    setAiDessertPlan("");
+    setIngredients("");
+
+    // 3. Wipe the Persistence Save Files
+    localStorage.removeItem('lastSearch');
+    localStorage.removeItem('lastAI');
+
+    // 4. Close menu if open
+    setMenuOpen(false);
+  };
+
   const goHome = () => {
     setActivePage("home");
     setShowFavoritesView(false);
@@ -370,12 +389,7 @@ const viewFavorites = async () => {
                 <button className="header-link-btn" onClick={goHome}>Home</button>
                 <button className="header-primary-btn" onClick={viewFavorites}>My Favorites ❤️</button>
                 
-                <button className="header-link-btn" onClick={() => { 
-                  setCurrentUser(null); 
-                  setShowFavoritesView(false); 
-                  //Deletes the "Save File" so the next user isn't logged in as you
-                  localStorage.removeItem('user'); 
-                }}>Logout</button>
+                <button className="header-link-btn" onClick={handleLogout}>Logout</button>
               </>
             ) : (
               <>
