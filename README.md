@@ -10,12 +10,30 @@ A collaborative project for Elective 1 & 2 - Bulacan State University
 ​This diagram shows how the user's browser interacts with our cloud infrastructure and external intelligence services.
 
 graph TD
-    User((User Browser)) -->|React/Vercel| Frontend[Frontend UI]
-    Frontend -->|REST API| Backend[Flask/Render Backend]
-    Backend -->|SQL| DB[(Supabase Database)]
-    Backend -->|GenAI SDK| Gemini[Google Gemini AI]
-    Backend -->|Request| Edamam[Edamam Nutrition API]
-    Backend -->|Request| Spoon[Spoonacular API]
+    %% Nodes
+    User((User Browser))
+    FE[Frontend UI <br/><i>React/Vercel</i>]
+    BE[Backend <br/><i>Flask/Render</i>]
+    DB[(Supabase Database <br/><i>PostgreSQL</i>)]
+    Gemini{Google Gemini AI <br/><i>GenAI SDK</i>}
+    Edamam[Edamam Nutrition API]
+    Spoon[Spoonacular API]
+
+    %% Connections
+    User -->|React/Vercel| FE
+    User -->|REST API| BE
+    FE -->|API Requests| BE
+    BE -->|SQL Queries| DB
+    BE -->|GenAI SDK| Gemini
+    BE -->|HTTP Request| Edamam
+    BE -->|HTTP Request| Spoon
+
+    %% Styling
+    style FE fill:#239120,stroke:#333,stroke-width:2px,color:#fff
+    style BE fill:#005c99,stroke:#333,stroke-width:2px,color:#fff
+    style DB fill:#3ecf8e,stroke:#333,stroke-width:2px,color:#fff
+    style Gemini fill:#f4b400,stroke:#333,stroke-width:2px
+
 
 
 
@@ -58,25 +76,45 @@ graph LR
     end
 
     subgraph "Vercel Platform"
-        FE[Production Frontend - React]
+        FE[Production Frontend <br/><i>React</i>]
     end
 
     subgraph "Render Platform"
-        BE[Production Backend - Python/Flask]
+        BE[Production Backend <br/><i>Python/Flask</i>]
     end
 
     subgraph "Supabase Cloud"
         DB[(PostgreSQL Database)]
     end
 
-    Domain --> FE
-    FE --> BE
-    BE --> DB
+    %% Flow
+    Domain -->|HTTPS| FE
+    FE -->|API Calls| BE
+    BE -->|Database Connection| DB
+
+    %% Styling
+    style Domain fill:#f9f9f9,stroke:#333
+    style FE fill:#000,stroke:#fff,color:#fff
+    style BE fill:#46a394,stroke:#333,color:#fff
+    style DB fill:#3ecf8e,stroke:#333,color:#fff
+
 
 
 
 
  
+---
 
+##Developed By:
+**Dishcovery AI** was built for Elective 1 & 2 by:
+
+* **Ashley Mae D. Cruz** | *Frontend Designer*
+  * Focused on creating clean, responsive, and user-friendly interfaces for every device.
+* **James Lenard M. Angcao** | *Backend Developer*
+  * Responsible for API logic, data handling, and smooth integration with the recipe services.
+* **Josephine B. Dela Cruz** | *Full-stack Contributor*
+  * Helped shape the app structure, menu flow, and overall recipe experience.
+
+---
 
 
